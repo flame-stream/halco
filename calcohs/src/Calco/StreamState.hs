@@ -1,10 +1,6 @@
 module Calco.StreamState where
 
-import Control.Monad (foldM)
 import Data.Function ((&))
-import Data.Map (Map, (!))
-import qualified Data.Map as Map
-import Data.Maybe (isJust)
 import Data.Set (Set, (\\))
 import qualified Data.Set as Set
 
@@ -42,3 +38,9 @@ matchState :: State -> InCont -> Bool
 matchState s c = (c & attrsI) `Set.isSubsetOf` (s & attrs)
               && (c & propsI) `Set.isSubsetOf` (s & props)
               && (c & propsI') `Set.disjoint`  (s & props)
+
+type Error = (State, InCont)
+
+matchStateM :: State -> InCont -> Either Error ()
+matchStateM s c | matchState s c = Right ()
+                | otherwise = Left (s, c)
