@@ -12,9 +12,7 @@ import Calco.StreamState
 type CheckedTerms = Map TermMarker State
 
 checkGraph :: Env -> Graph -> Either Error ()
-checkGraph e g@(Graph m) = either Left (const $ Right ())
-                         . foldM (checkTerm e g) Map.empty
-                         $ Map.keys m
+checkGraph e g@(Graph m) = () <$ foldM (checkTerm e g) Map.empty (Map.keys m)
 
 checkTerm :: Env -> Graph
           -> CheckedTerms -> TermMarker
