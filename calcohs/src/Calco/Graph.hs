@@ -11,7 +11,6 @@ type TfmName = String
 type Streams = Map StreamName OutCont
 type Tfms1 = Map TfmName (InCont, OutCont)
 type Tfms2 = Map TfmName (InCont, InCont, OutCont)
-type Result = Set TfmName
 
 data Env = Env { streams :: Streams
                , tfms1 :: Tfms1
