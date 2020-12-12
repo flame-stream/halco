@@ -6,6 +6,7 @@ module Calco.CoGraph where
 import           Calco.Conts
 import           Calco.Defs
 import           Data.Map    (Map)
+import qualified Data.Map    as Map
 import           Data.Set    (Set)
 
 type Streams i = Map StreamName i
@@ -21,6 +22,11 @@ data Env i o where
          , tfms1   :: Tfms1 i o
          , tfms2   :: Tfms2 i o
          }                      -> Env i o
+
+emptyEnv :: EnvContext i o => Env i o
+emptyEnv = Env { streams = Map.empty
+               , tfms1 = Map.empty
+               , tfms2 = Map.empty }
 
 type Semantics = Set TfmName
 
