@@ -1,7 +1,7 @@
 module Calco.GraphGen where
 
-import Calco.Graph
+import           Calco.CoGraph
+import           Calco.Graph
 
-
-genGraphs :: (Env, Semantics) -> [Graph]
+genGraphs :: CoGraph i o -> [Graph]
 genGraphs = undefined

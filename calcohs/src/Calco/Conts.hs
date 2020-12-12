@@ -1,42 +1,34 @@
+{-# LANGUAGE ConstraintKinds  #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeFamilies     #-}
+
 module Calco.Conts where
 
-import Data.Set (Set)
-import qualified Data.Set as Set
+import           Calco.State
 
+type ContMatchError a p i = (State a p, i)
 
-type StreamName = String
-type AttrName = String
-type PropName = String
+class StateContext (AT i) (PT i) => InCont i where
+  type AT i :: * -- Attribute type
+  type PT i :: * -- Property type
 
-data Attr = Attr StreamName AttrName
-  deriving (Show, Ord, Eq)
+  emptyIn :: i
+  match :: State (AT i) (PT i) -> i -> Bool
 
-data Prop = Prop PropName | AttrProp Attr PropName
-  deriving (Show, Ord, Eq)
+  matchM :: State (AT i) (PT i) -> i
+         -> Either (ContMatchError (AT i) (PT i) i) ()
+  matchM s c | match s c = Right ()
+             | otherwise = Left (s, c)
 
+type InContContext a p i = (a ~ AT i, p ~ PT i)
 
-data InCont = InCont { attrsI :: Set Attr
-                     , propsI :: Set Prop
-                     , propsI' :: Set Prop }
-  deriving (Show)
+class StateContext (AT' c) (PT' c) => OutCont c where
+  type AT' c :: * -- Attribute type
+  type PT' c :: * -- Property type
 
-emptyInCont :: InCont
-emptyInCont = InCont { attrsI = Set.empty
-                     , propsI = Set.empty
-                     , propsI' = Set.empty }
+  emptyOut :: c
+  update :: State (AT' c) (PT' c) -> c -> State (AT' c) (PT' c)
 
+type OutContContext a p o = (a ~ AT' o, p ~ PT' o)
 
-data DelAttrs = DelAllAttrs | DelAttrs (Set Attr)
-  deriving (Show)
-
-data OutCont = OutCont { attrsO :: Set Attr
-                       , attrsO' :: DelAttrs
-                       , propsO :: Set Prop
-                       , propsO' :: Set Prop }
-  deriving (Show)
-
-emptyOutCont :: OutCont
-emptyOutCont = OutCont { attrsO = Set.empty
-                       , attrsO' = DelAttrs Set.empty
-                       , propsO = Set.empty
-                       , propsO' = Set.empty }
+type ContContext a p i o = (InContContext a p i, OutContContext a p o)
