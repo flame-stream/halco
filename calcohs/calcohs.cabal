@@ -27,13 +27,13 @@ library
       Calco.Check
       Calco.CoGraph
       Calco.Conts
-      Calco.Conts.First
+      Calco.Conts.General
       Calco.Cost
       Calco.Defs
+      Calco.DSL
       Calco.Graph
       Calco.GraphGen
       Calco.State
-      Calco.Utils
   other-modules:
       Paths_calcohs
   hs-source-dirs:
@@ -60,6 +60,8 @@ test-suite calcohs-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Examples.Pets.V1.CoGraph
+      Examples.Pets.V1.Graph
       Paths_calcohs
   hs-source-dirs:
       test
