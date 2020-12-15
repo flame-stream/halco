@@ -8,6 +8,7 @@ import           Calco.Conts
 import           Calco.Graph
 import           Calco.State             (State)
 import qualified Calco.State             as State
+import           Calco.Utils
 import           Control.Monad           (foldM)
 import           Data.Either.Combinators (mapLeft)
 import           Data.Map                (Map, (!))
@@ -24,9 +25,14 @@ data CheckGraphError a p i =
 checkGraph :: ContContext a p i o
            => CoGraph i o -> Graph -> Either (CheckGraphError a p i) ()
 checkGraph (e, s) g@(Graph m)
-  | s `isSubsetOf` nodeNames g =
+  | g `hasSemantics` s =
     mapLeft CME $ () <$ foldM (checkTerm e g) Map.empty (Map.keys m)
   | otherwise = Left SemanticError
+
+hasSemantics :: Graph -> Semantics -> Bool
+hasSemantics g s =
+  let occs = countOccs $ nodeNames g
+   in all ((== (1 :: Integer)) . (occs !)) s
 
 checkTerm :: ContContext a p i o
           => Env i o -> Graph

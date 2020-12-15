@@ -10,7 +10,10 @@ import           Calco.Check
 import           Calco.CoGraph
 import           Calco.Conts
 import qualified Calco.Conts.Base   as Base
+import           Calco.Defs
 import           Calco.Graph
+import           Calco.Utils
+import           Data.Map           (Map)
 
 import qualified Examples.Pets      as Pets
 import qualified Examples.Pets.Base as Base

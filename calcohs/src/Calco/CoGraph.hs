@@ -20,6 +20,7 @@ data Node i o where
 -- Set of streams and transformations, annotated with contracts
 newtype Env i o = Env (Map NodeName (Node i o))
 
+-- Data sinks
 type Semantics = Set NodeName
 
 type CoGraph i o = (Env i o, Semantics)
@@ -42,5 +43,5 @@ tfm2 (Env m) nn = m ! nn & \case
   Tfm2 i1 i2 o -> (i1, i2, o)
   _            -> error $ nn <> " is expected to be transform 2"
 
-semantics :: [NodeName] -> Set NodeName
+semantics :: [NodeName] -> Semantics
 semantics = Set.fromList
