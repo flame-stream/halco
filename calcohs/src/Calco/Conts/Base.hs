@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeFamilies #-}
 
-module Calco.Conts.General where
+module Calco.Conts.Base where
 
 import qualified Calco.Conts as Conts
 import qualified Calco.Defs  as Defs
@@ -28,6 +28,11 @@ data InCont = InCont
   }
   deriving (Show)
 
+inCont :: [Attr] -> [Prop] -> [Prop] -> InCont
+inCont as ps p's = InCont { attrsI  = Set.fromList as
+                          , propsI  = Set.fromList ps
+                          , propsI' = Set.fromList p's }
+
 instance Conts.InCont InCont where
   type AT InCont = Attr
   type PT InCont = Prop
@@ -40,15 +45,17 @@ instance Conts.InCont InCont where
            && propsI c `Set.isSubsetOf` props s
            && propsI' c `Set.disjoint`  props s
 
-data DelAttrs = DelAllAttrs | DelAttrs (Set Attr)
-  deriving (Show)
-
 data OutCont = OutCont
   { attrsO  :: Set Attr -- Tfm adds attributes
   , propsO  :: Set Prop -- Properties to be added
   , propsO' :: Set Prop -- Properties to be deleted
   }
   deriving (Show)
+
+outCont :: [Attr] -> [Prop] -> [Prop] -> OutCont
+outCont as ps p's = OutCont { attrsO  = Set.fromList as
+                            , propsO  = Set.fromList ps
+                            , propsO' = Set.fromList p's }
 
 instance Conts.OutCont OutCont where
   type AT' OutCont = Attr

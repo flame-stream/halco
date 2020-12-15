@@ -27,7 +27,7 @@ library
       Calco.Check
       Calco.CoGraph
       Calco.Conts
-      Calco.Conts.General
+      Calco.Conts.Base
       Calco.Cost
       Calco.Defs
       Calco.DSL

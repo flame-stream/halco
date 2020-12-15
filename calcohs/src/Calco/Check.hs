@@ -14,41 +14,36 @@ import qualified Data.Map      as Map
 
 type CheckedTerms a p = Map TermMarker (State a p)
 
-type Constraints a p i o =
-  ( ContContext a p i o
-  , EnvContext i o
-  )
-
-checkGraph :: Constraints a p i o
+checkGraph :: ContContext a p i o
            => Env i o -> Graph -> Either (ContMatchError a p i) ()
 checkGraph e g@(Graph m) = () <$ foldM (checkTerm e g) Map.empty (Map.keys m)
 
-checkTerm :: Constraints a p i o
+checkTerm :: ContContext a p i o
           => Env i o -> Graph
           -> CheckedTerms a p -> TermMarker
           -> Either (ContMatchError a p i) (CheckedTerms a p)
 checkTerm e g checked tm = snd <$> checkTermHelper e g checked tm
 
-checkTermHelper :: Constraints a p i o
+checkTermHelper :: ContContext a p i o
                 => Env i o -> Graph
                 -> CheckedTerms a p -> TermMarker
                 -> Either (ContMatchError a p i) (State a p, CheckedTerms a p)
 checkTermHelper e g@(Graph m) checked tm
   | tm `Map.member` checked = Right (checked ! tm, checked)
   | otherwise = case m ! tm of
-    Const stream -> do
-      let state =  State.empty `update` (streams e ! stream)
+    Const s -> do
+      let state =  State.empty `update` stream e s
       let checked' = check state checked
       Right (state, checked')
     App1 f tm' -> do
-      let (inCont, outCont) = tfms1 e ! f
+      let (inCont, outCont) = tfm1 e f
       (state, checked') <- checkTermHelper e g checked tm'
       state `matchM` inCont
       let state' = state `update` outCont
       let checked'' = check state' checked'
       Right (state', checked'')
     App2 f tm1 tm2 -> do
-      let (inCont1, inCont2, outCont) = tfms2 e ! f
+      let (inCont1, inCont2, outCont) = tfm2 e f
       (state1, checked') <- checkTermHelper e g checked tm1
       state1 `matchM` inCont1
       (state2, checked'') <- checkTermHelper e g checked' tm2
