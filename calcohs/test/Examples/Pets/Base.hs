@@ -22,10 +22,10 @@ cograph = (, petsSemantics) $ env
                      -->  outCont [] [] []
 
   , "priceNames" `ap1` inCont ["person.name", "pet.name"] ["sameAge", "noDinosaurs"] []
-                  -->  outCont [] [] []
+                  -->  outContN [] [] []
 
   , "nameBreedCorr" `ap1` inCont ["person.name", "breed.name"] ["noDinosaurs"] []
-                     --> outCont [] [] []
+                     --> outContN [] [] []
 
   , "filterDinosaurs" `ap1` inCont ["pet.age"] [] []
                        -->  outCont [] ["noDinosaurs"] []

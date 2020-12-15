@@ -30,9 +30,11 @@ data InCont = InCont
   deriving (Show)
 
 inCont :: [NodeName] -> [NodeName] -> [NodeName] -> InCont
-inCont as ps p's = InCont { attrsI  = Set.fromList $ map Attr as
-                          , propsI  = Set.fromList $ map Prop ps
-                          , propsI' = Set.fromList $ map Prop p's }
+inCont as ps p's = InCont
+  { attrsI  = Set.fromList $ map Attr as
+  , propsI  = Set.fromList $ map Prop ps
+  , propsI' = Set.fromList $ map Prop p's
+  }
 
 instance Conts.InCont InCont where
   type AT InCont = Attr
@@ -46,26 +48,41 @@ instance Conts.InCont InCont where
            && propsI c `Set.isSubsetOf` props s
            && propsI' c `Set.disjoint`  props s
 
+data OutAttrs =
+    AddAttrs (Set Attr)
+  | NewAttrs (Set Attr)
+  deriving (Show)
+
 data OutCont = OutCont
-  { attrsO  :: Set Attr -- Tfm adds attributes
+  { attrsO  :: OutAttrs -- Changes in attrs set
   , propsO  :: Set Prop -- Properties to be added
   , propsO' :: Set Prop -- Properties to be deleted
   }
   deriving (Show)
 
-outCont :: [NodeName] -> [NodeName] -> [NodeName] -> OutCont
-outCont as ps p's = OutCont { attrsO  = Set.fromList $ map Attr as
-                            , propsO  = Set.fromList $ map Prop ps
-                            , propsO' = Set.fromList $ map Prop p's }
+outCont' :: (Set Attr -> OutAttrs) -> [NodeName] -> [NodeName] -> [NodeName] -> OutCont
+outCont' ctor as ps p's = OutCont
+  { attrsO  = ctor $ Set.fromList $ map Attr as
+  , propsO  = Set.fromList $ map Prop ps
+  , propsO' = Set.fromList $ map Prop p's
+  }
+
+outCont, outContN :: [NodeName] -> [NodeName] -> [NodeName] -> OutCont
+outCont  = outCont' AddAttrs
+outContN = outCont' NewAttrs
 
 instance Conts.OutCont OutCont where
   type AT' OutCont = Attr
   type PT' OutCont = Prop
 
-  emptyOut = OutCont { attrsO = Set.empty
+  emptyOut = OutCont { attrsO = AddAttrs Set.empty
                      , propsO = Set.empty
                      , propsO' = Set.empty }
 
   update s c =
-    State { attrs = attrsO c <> attrs s
+    State { attrs = attrs'
           , props = propsO c <> (props s \\ propsO' c) }
+    where
+      attrs' = case attrsO c of
+        AddAttrs attrs' -> attrs' <> attrs s
+        NewAttrs attrs' -> attrs'

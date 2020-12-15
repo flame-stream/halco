@@ -15,6 +15,7 @@ class StateContext (AT i) (PT i) => InCont i where
   type AT i :: Type -- Attribute type
   type PT i :: Type -- Property type
 
+  -- Input contract that allows any input
   emptyIn :: i
   match :: State (AT i) (PT i) -> i -> Bool
 
@@ -29,11 +30,12 @@ class StateContext (AT' c) (PT' c) => OutCont c where
   type AT' c :: Type -- Attribute type
   type PT' c :: Type -- Property type
 
+  -- Contract of the identity function
   emptyOut :: c
   update :: State (AT' c) (PT' c) -> c -> State (AT' c) (PT' c)
 
 type OutContContext a p o = (OutCont o, a ~ AT' o, p ~ PT' o)
 
--- Proof: that types of attributes and properties
+-- Proof that types of attributes and properties
 -- associated with i and o are equal to a and p
 type ContContext a p i o = (InContContext a p i, OutContContext a p o)
