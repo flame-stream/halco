@@ -3,6 +3,7 @@
 module Calco.Conts.Base where
 
 import qualified Calco.Conts as Conts
+import           Calco.Defs  (NodeName)
 import qualified Calco.Defs  as Defs
 import           Calco.State (State (State), attrs, props)
 import           Data.Set    (Set, (\\))
@@ -28,10 +29,10 @@ data InCont = InCont
   }
   deriving (Show)
 
-inCont :: [Attr] -> [Prop] -> [Prop] -> InCont
-inCont as ps p's = InCont { attrsI  = Set.fromList as
-                          , propsI  = Set.fromList ps
-                          , propsI' = Set.fromList p's }
+inCont :: [NodeName] -> [NodeName] -> [NodeName] -> InCont
+inCont as ps p's = InCont { attrsI  = Set.fromList $ map Attr as
+                          , propsI  = Set.fromList $ map Prop ps
+                          , propsI' = Set.fromList $ map Prop p's }
 
 instance Conts.InCont InCont where
   type AT InCont = Attr
@@ -52,10 +53,10 @@ data OutCont = OutCont
   }
   deriving (Show)
 
-outCont :: [Attr] -> [Prop] -> [Prop] -> OutCont
-outCont as ps p's = OutCont { attrsO  = Set.fromList as
-                            , propsO  = Set.fromList ps
-                            , propsO' = Set.fromList p's }
+outCont :: [NodeName] -> [NodeName] -> [NodeName] -> OutCont
+outCont as ps p's = OutCont { attrsO  = Set.fromList $ map Attr as
+                            , propsO  = Set.fromList $ map Prop ps
+                            , propsO' = Set.fromList $ map Prop p's }
 
 instance Conts.OutCont OutCont where
   type AT' OutCont = Attr

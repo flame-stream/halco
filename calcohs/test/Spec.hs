@@ -1,24 +1,29 @@
-import           Calco.Utils
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies        #-}
+
+import           Control.Monad      (forM_)
+import           Data.Either        (isRight)
+import           Debug.Trace
+import           Test.Hspec
+
+import           Calco.Check
+import           Calco.CoGraph
+import           Calco.Conts
+import qualified Calco.Conts.Base   as Base
+import           Calco.Graph
+
+import qualified Examples.Pets      as Pets
+import qualified Examples.Pets.Base as Base
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec $ do
+  testPets
 
--- examplePets :: Maybe State
--- examplePets = checkTerm e t
---   where
---     petsAttrs = map (\(Attr _ a) -> Attr "pets" a)
---                     [Attr "" "id", Attr "" "name", Attr "" "age"]
---     petsCont = emptyOutCont { attrsO = Set.fromList petsAttrs }
+checkGraph' :: ContContext a p i o => CoGraph i o -> Graph -> Bool
+checkGraph' c = isRight . checkGraph c
 
---     personsAttrs = map (\(Attr _ a) -> Attr "persons" a)
---                        [Attr "" "id", Attr "" "name", Attr "" "age"]
---     personsProps = [AttrProp (personsAttrs !! 2) "ageLT10"]
---     personsCont = emptyOutCont { attrsO = Set.fromList personsAttrs
---                                , propsO = Set.fromList personsProps }
-
---     e = Env { streams = Map.fromList [ ("pets", petsCont)
---                                      , ("persons", personsCont) ]
---             , tfms1 = undefined
---             , tfms2 = undefined }
-
---     t = undefined
+testPets :: Spec
+testPets = describe "Pets example checks" $ do
+  forM_ (zip [1..] Pets.graphs) $ \(i :: Integer, graph) ->
+    it ("Base on graph " <> show i) $ do
+      graph `shouldSatisfy` checkGraph' Base.cograph

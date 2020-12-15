@@ -6,17 +6,27 @@ module Calco.Check (checkGraph) where
 import           Calco.CoGraph
 import           Calco.Conts
 import           Calco.Graph
-import           Calco.State   (State)
-import qualified Calco.State   as State
-import           Control.Monad (foldM)
-import           Data.Map      (Map, (!))
-import qualified Data.Map      as Map
+import           Calco.State             (State)
+import qualified Calco.State             as State
+import           Control.Monad           (foldM)
+import           Data.Either.Combinators (mapLeft)
+import           Data.Map                (Map, (!))
+import qualified Data.Map                as Map
+import           Data.Set                (isSubsetOf)
 
 type CheckedTerms a p = Map TermMarker (State a p)
 
+data CheckGraphError a p i =
+    CME (ContMatchError a p i)
+  | SemanticError
+  deriving (Show)
+
 checkGraph :: ContContext a p i o
-           => Env i o -> Graph -> Either (ContMatchError a p i) ()
-checkGraph e g@(Graph m) = () <$ foldM (checkTerm e g) Map.empty (Map.keys m)
+           => CoGraph i o -> Graph -> Either (CheckGraphError a p i) ()
+checkGraph (e, s) g@(Graph m)
+  | s `isSubsetOf` nodeNames g =
+    mapLeft CME $ () <$ foldM (checkTerm e g) Map.empty (Map.keys m)
+  | otherwise = Left SemanticError
 
 checkTerm :: ContContext a p i o
           => Env i o -> Graph
