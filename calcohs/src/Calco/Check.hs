@@ -3,7 +3,7 @@
 
 module Calco.Check (checkGraph) where
 
-import           Calco.CoGraph
+import           Calco.CGraph
 import           Calco.Conts
 import           Calco.Graph
 import           Calco.State             (State)
@@ -23,7 +23,7 @@ data CheckGraphError a p i =
   deriving (Show)
 
 checkGraph :: ContContext a p i o
-           => CoGraph i o -> Graph -> Either (CheckGraphError a p i) ()
+           => CGraph i o -> Graph -> Either (CheckGraphError a p i) ()
 checkGraph (e, s) g@(Graph m)
   | g `hasSemantics` s =
     mapLeft CME $ () <$ foldM (checkTerm e g) Map.empty (Map.keys m)

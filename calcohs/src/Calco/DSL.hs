@@ -1,6 +1,6 @@
 module Calco.DSL where
 
-import           Calco.CoGraph
+import           Calco.CGraph
 import           Calco.Conts
 import           Calco.Defs
 import           Calco.Graph

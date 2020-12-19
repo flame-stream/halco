@@ -2,7 +2,7 @@
 {-# LANGUAGE GADTs           #-}
 {-# LANGUAGE LambdaCase      #-}
 
-module Calco.CoGraph where
+module Calco.CGraph where
 
 import           Calco.Conts
 import           Calco.Defs
@@ -23,7 +23,7 @@ newtype Env i o = Env (Map NodeName (Node i o))
 -- Data sinks
 type Semantics = Set NodeName
 
-type CoGraph i o = (Env i o, Semantics)
+type CGraph i o = (Env i o, Semantics)
 
 env :: [(NodeName, Node i o)] -> Env i o
 env = Env . Map.fromList

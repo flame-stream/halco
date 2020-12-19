@@ -24,8 +24,8 @@ source-repository head
 
 library
   exposed-modules:
+      Calco.CGraph
       Calco.Check
-      Calco.CoGraph
       Calco.Conts
       Calco.Conts.Base
       Calco.Cost
