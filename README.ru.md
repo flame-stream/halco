@@ -179,3 +179,33 @@ union s1 s2 = State { attrs = attrs s1 `Set.union` attrs s2
 Покажем, что мы можем определить состояние потока для всех рёбер конкретного графа. Действительно, состояние рёбер, выходящих из источников совпадают с их выходными контрактами. Если состояние входящих рёбер удовлетворяет входнымым контрактам операции, то состояние выходящих вычисляется обновлением состояния входа в соответствии с выходным контрактом.
 
 Таким образом, мы умеем для конкретного графа вычислять состояния всех его рёбер и проверять контракты всех его нод.
+
+## calco API example
+
+TODO
+
+```python
+cograph, node = calco.cgraph(
+    semantics={"write_word_count"}
+)
+
+
+@node
+def lines() -> OutCont({"line"}):
+    throw NotImplementedError()
+
+
+@node
+def split(...) -> ...:
+    throw NotImplementedError()
+
+
+@node
+def count_words(...) -> ...
+    throw NotImplementedError()
+
+
+@node
+def write_word_count(stats: InCont(attrs={"word", "count"})):
+    throw NotImplementedError()
+```
