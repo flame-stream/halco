@@ -3,8 +3,11 @@
 
 module Calco.Graph where
 
-import           Data.Map    (Map)
-import qualified Data.Map    as Map
+import           Data.Function ((&))
+import           Data.Map      (Map, (!))
+import qualified Data.Map      as Map
+import           Data.Set      (Set)
+import qualified Data.Set      as Set
 
 import           Calco.Defs
 import           Calco.Utils
@@ -23,6 +26,9 @@ newtype Graph = Graph (Map TermId Term)
 graph :: [(TermId, Term)] -> Graph
 graph = Graph . Map.fromList
 
+getMap :: Graph -> Map TermId Term
+getMap = \case Graph m -> m
+
 nodeName :: Term -> NodeName
 nodeName = \case
   Const nn    -> nn
@@ -34,8 +40,23 @@ nodeNames (Graph m) = map nodeName $ Map.elems m
 
 -- Cut correct (all needed term ids exist)
 -- subgraph with provided terms
-cut :: Graph -> [TermId] -> Graph
-cut = undefined
+cut :: Graph -> Set TermId -> Graph
+cut g@(Graph m) tids = Graph $ foldr f Map.empty $ Map.toList m
+  where
+    f :: (TermId, Term) -> Map TermId Term -> Map TermId Term
+    f (tid, t) m'
+      | tid `Map.member` m' = m'
+      | tid `Set.notMember` tids = m'
+      | otherwise = m' `Map.union` getMap (cut' g tid)
+
+cut' :: Graph -> TermId -> Graph
+cut' g@(Graph m) tid = m ! tid & Graph . \case
+  c@(Const _) -> Map.singleton tid c
+  a@(App1 _ tid') -> Map.insert tid a . getMap $ cut' g tid'
+  a@(App2 _ tid1 tid2) ->
+    let m1 = getMap $ cut' g tid1
+        m2 = getMap $ cut' g tid2
+     in Map.insert tid a $ m1 `Map.union` m2
 
 findIds :: Graph -> NodeName -> [TermId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m

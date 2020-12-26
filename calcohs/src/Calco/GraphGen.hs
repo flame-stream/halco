@@ -27,8 +27,10 @@ genGraphs (e@(Env m), s) =
         (fmap (toState . stream e) <$> ss)
    in map (bigGraph `cut`) $ semanticsTids bigGraph s
   where
-    semanticsTids :: Graph -> Semantics -> [[TermId]]
-    semanticsTids g = cartesianProduct . (findIds g <$>) . Set.toList
+    semanticsTids :: Graph -> Semantics -> [Set TermId]
+    semanticsTids g = (Set.fromList <$>)
+                    . cartesianProduct . (findIds g <$>)
+                    . Set.toList
 
 genFromSources :: ContContext a p i o
                => Int -> Env i o -> Set NodeName
@@ -38,8 +40,8 @@ genFromSources 0 _ _ _ _ = []
 genFromSources depth e@(Env m) nns tidMax sources = do
   nn <- Set.toList nns
   m ! nn & \case
-    Stream _     -> error "Streams should be in sources"
-    Tfm1 i o     -> do
+    Stream _ -> error "Streams should be in sources"
+    Tfm1 i o -> do
       (tid, state) <- sources
       guard $ state `match` i
       (undefined, App1 nn tid) : genFromSources (depth - 1) e
