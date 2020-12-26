@@ -9,3 +9,8 @@ countOccs = foldr f Map.empty
     f x m = case m !? x of
       Just i  -> Map.insert x (i + 1) m
       Nothing -> Map.insert x 1 m
+
+cartesianProduct :: [[a]] -> [[a]]
+cartesianProduct []       = []
+cartesianProduct [xs]     = (: []) <$> xs
+cartesianProduct (xs:xss) = [x : ys | ys <- cartesianProduct xss, x <- xs]

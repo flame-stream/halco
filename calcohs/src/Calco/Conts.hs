@@ -34,6 +34,9 @@ class StateContext (AT' c) (PT' c) => OutCont c where
   emptyOut :: c
   update :: State (AT' c) (PT' c) -> c -> State (AT' c) (PT' c)
 
+  toState :: c -> State (AT' c) (PT' c)
+  toState = update empty
+
 type OutContContext a p o = (OutCont o, a ~ AT' o, p ~ PT' o)
 
 -- Proof that types of attributes and properties

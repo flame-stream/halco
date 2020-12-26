@@ -47,7 +47,7 @@ checkTermHelper e g@(Graph m) checked tid
   | tid `Map.member` checked = Right (checked ! tid, checked)
   | otherwise = case m ! tid of
     Const s -> do
-      let state = State.empty `update` stream e s
+      let state = toState $ stream e s
       let checked' = check state checked
       Right (state, checked')
     App1 f tid' -> do

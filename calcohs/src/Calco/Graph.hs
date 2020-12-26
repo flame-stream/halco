@@ -29,3 +29,6 @@ nodeName = \case
 
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
+
+cut :: Graph -> [TermId] -> Graph
+cut = undefined
