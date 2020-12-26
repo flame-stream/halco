@@ -14,3 +14,10 @@ cartesianProduct :: [[a]] -> [[a]]
 cartesianProduct []       = []
 cartesianProduct [xs]     = (: []) <$> xs
 cartesianProduct (xs:xss) = [x : ys | ys <- cartesianProduct xss, x <- xs]
+
+findKeys :: (Ord k, Eq a) => a -> Map k a -> [k]
+findKeys x = map fst . filter ((== x) . snd) . Map.toList
+
+maximumIntegral :: Integral a => [a] -> a
+maximumIntegral [] = 0
+maximumIntegral xs = maximum xs

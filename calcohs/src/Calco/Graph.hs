@@ -3,9 +3,11 @@
 
 module Calco.Graph where
 
+import           Data.Map    (Map)
+import qualified Data.Map    as Map
+
 import           Calco.Defs
-import           Data.Map   (Map)
-import qualified Data.Map   as Map
+import           Calco.Utils
 
 type TermId = Integer
 
@@ -30,5 +32,10 @@ nodeName = \case
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
 
+-- Cut correct (all needed term ids exist)
+-- subgraph with provided terms
 cut :: Graph -> [TermId] -> Graph
 cut = undefined
+
+findIds :: Graph -> NodeName -> [TermId]
+findIds (Graph m) nn = findKeys nn $ nodeName <$> m
