@@ -7,18 +7,18 @@ import           Calco.Defs
 import           Data.Map   (Map)
 import qualified Data.Map   as Map
 
-type TermMarker = Integer
+type TermId = Integer
 
 data Term =
     Const NodeName
-  | App1 NodeName TermMarker
-  | App2 NodeName TermMarker TermMarker
+  | App1 NodeName TermId
+  | App2 NodeName TermId TermId
   deriving (Show)
 
-newtype Graph = Graph (Map TermMarker Term)
+newtype Graph = Graph (Map TermId Term)
   deriving (Show)
 
-graph :: [(TermMarker, Term)] -> Graph
+graph :: [(TermId, Term)] -> Graph
 graph = Graph . Map.fromList
 
 nodeName :: Term -> NodeName

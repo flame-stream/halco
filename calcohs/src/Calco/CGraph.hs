@@ -20,13 +20,23 @@ data Node i o where
 -- Set of streams and transformations, annotated with contracts
 newtype Env i o = Env (Map NodeName (Node i o))
 
--- Data sinks
 type Semantics = Set NodeName
 
 type CGraph i o = (Env i o, Semantics)
 
 env :: [(NodeName, Node i o)] -> Env i o
 env = Env . Map.fromList
+
+isStream :: Node i o -> Bool
+isStream = \case
+  Stream _ -> True
+  _        -> False
+
+isTfm :: Node i o -> Bool
+isTfm = \case
+  Stream _ -> False
+  Tfm1 {}  -> True
+  Tfm2 {}  -> True
 
 stream :: Env i o -> NodeName -> o
 stream (Env m) nn = m ! nn & \case
@@ -42,6 +52,15 @@ tfm2 :: Env i o -> NodeName -> (i, i, o)
 tfm2 (Env m) nn = m ! nn & \case
   Tfm2 i1 i2 o -> (i1, i2, o)
   _            -> error $ nn <> " is expected to be transform 2"
+
+nns :: (Node i o -> Bool) -> Env i o -> [NodeName]
+nns p (Env m) = map fst . filter (p . snd) $ Map.toList m
+
+streams :: Env i o -> [NodeName]
+streams = nns isStream
+
+tfms :: Env i o -> [NodeName]
+tfms = nns isTfm
 
 semantics :: [NodeName] -> Semantics
 semantics = Set.fromList

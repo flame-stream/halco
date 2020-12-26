@@ -5,7 +5,7 @@ import           Calco.Conts
 import           Calco.Defs
 import           Calco.Graph
 
-(->>) :: TermMarker -> Term -> (TermMarker, Term)
+(->>) :: TermId -> Term -> (TermId, Term)
 (->>) = (,)
 
 infix 1 `ap0`

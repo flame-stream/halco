@@ -1,7 +1,7 @@
 module Examples.Pets where
 
 import           Calco.Check
-import           Calco.CoGraph
+import           Calco.CGraph
 import           Calco.DSL
 import           Calco.Graph
 import           Test.Hspec

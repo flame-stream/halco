@@ -2,14 +2,14 @@
 
 module Examples.Pets.Base (cograph) where
 
-import           Calco.CoGraph
+import           Calco.CGraph
 import           Calco.Conts.Base
 import           Calco.DSL
 import qualified Data.Map         as Map
 import qualified Data.Set         as Set
 import           Examples.Pets
 
-cograph :: CoGraph InCont OutCont
+cograph :: CGraph InCont OutCont
 cograph = (, petsSemantics) $ env
   [ "pets"    `ap0` outCont ["pet.id", "pet.name", "pet.age", "pet.breedId"] [] []
   , "persons" `ap0` outCont ["person.id", "person.name", "person.age"] [] []

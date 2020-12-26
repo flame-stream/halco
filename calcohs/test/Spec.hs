@@ -7,7 +7,7 @@ import           Debug.Trace
 import           Test.Hspec
 
 import           Calco.Check
-import           Calco.CoGraph
+import           Calco.CGraph
 import           Calco.Conts
 import qualified Calco.Conts.Base   as Base
 import           Calco.Defs
@@ -22,7 +22,7 @@ main :: IO ()
 main = hspec $ do
   testPets
 
-checkGraph' :: ContContext a p i o => CoGraph i o -> Graph -> Bool
+checkGraph' :: ContContext a p i o => CGraph i o -> Graph -> Bool
 checkGraph' c = isRight . checkGraph c
 
 testPets :: Spec
