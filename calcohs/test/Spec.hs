@@ -3,17 +3,17 @@
 
 import           Control.Monad      (forM_)
 import           Data.Either        (isRight)
+import           Data.Map           (Map)
 import           Debug.Trace
 import           Test.Hspec
 
-import           Calco.Check
 import           Calco.CGraph
+import           Calco.Check
 import           Calco.Conts
 import qualified Calco.Conts.Base   as Base
 import           Calco.Defs
 import           Calco.Graph
 import           Calco.Utils
-import           Data.Map           (Map)
 
 import qualified Examples.Pets      as Pets
 import qualified Examples.Pets.Base as Base

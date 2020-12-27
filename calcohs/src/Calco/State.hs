@@ -4,9 +4,10 @@
 
 module Calco.State where
 
-import           Calco.Defs
 import           Data.Set   (Set)
 import qualified Data.Set   as Set
+
+import           Calco.Defs
 
 type StateContext a p = (Attr a, Prop p)
 

@@ -2,12 +2,13 @@
 
 module Calco.Conts.Base where
 
+import           Data.Set    (Set, (\\))
+import qualified Data.Set    as Set
+
 import qualified Calco.Conts as Conts
 import           Calco.Defs  (NodeName)
 import qualified Calco.Defs  as Defs
 import           Calco.State (State (State), attrs, props)
-import           Data.Set    (Set, (\\))
-import qualified Data.Set    as Set
 
 type AttrName = String
 type PropName = String

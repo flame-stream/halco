@@ -2,11 +2,13 @@
 
 module Examples.Pets.Base (cograph) where
 
+import qualified Data.Map         as Map
+import qualified Data.Set         as Set
+
 import           Calco.CGraph
 import           Calco.Conts.Base
 import           Calco.DSL
-import qualified Data.Map         as Map
-import qualified Data.Set         as Set
+
 import           Examples.Pets
 
 cograph :: CGraph InCont OutCont

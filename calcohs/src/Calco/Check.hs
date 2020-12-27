@@ -3,17 +3,18 @@
 
 module Calco.Check (checkGraph) where
 
+import           Control.Monad           (foldM)
+import           Data.Either.Combinators (mapLeft)
+import           Data.Map                (Map, (!))
+import qualified Data.Map                as Map
+import           Data.Set                (isSubsetOf)
+
 import           Calco.CGraph
 import           Calco.Conts
 import           Calco.Graph
 import           Calco.State             (State)
 import qualified Calco.State             as State
 import           Calco.Utils
-import           Control.Monad           (foldM)
-import           Data.Either.Combinators (mapLeft)
-import           Data.Map                (Map, (!))
-import qualified Data.Map                as Map
-import           Data.Set                (isSubsetOf)
 
 type CheckedTerms a p = Map TermId (State a p)
 

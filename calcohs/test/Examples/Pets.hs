@@ -1,10 +1,11 @@
 module Examples.Pets where
 
+import           Test.Hspec
+
 import           Calco.Check
 import           Calco.CGraph
 import           Calco.DSL
 import           Calco.Graph
-import           Test.Hspec
 
 petsSemantics :: Semantics
 petsSemantics = semantics

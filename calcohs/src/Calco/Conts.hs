@@ -4,8 +4,9 @@
 
 module Calco.Conts where
 
-import           Calco.State
 import           Data.Kind   (Type)
+
+import           Calco.State
 
 -- Error type of the context match.
 -- Contains match input that caused error.
