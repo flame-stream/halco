@@ -5,7 +5,7 @@ module Calco.GraphGen where
 
 import           Control.Monad             (guard)
 import qualified Control.Monad.State       as StateM
-import           Control.Monad.Trans.Class (MonadTrans)
+import           Control.Monad.Trans.Class (MonadTrans, lift)
 import           Data.Function             ((&))
 import           Data.Map                  (Map, (!))
 import qualified Data.Map                  as Map
@@ -40,7 +40,7 @@ genFromSources :: ContContext a p i o
                => Int -> Env i o -> Set NodeName
                -> [(TermId, State a p)]
                -> ListT (StateM.State TermId) (TermId, Term)
-genFromSources 0 _ _ _ = ListT $ pure Nothing
+genFromSources 0 _ _ _ = nilLT
 genFromSources depth e@(Env m) nns sources = do
   nn <- fromFoldable nns
   m ! nn & \case
@@ -49,7 +49,7 @@ genFromSources depth e@(Env m) nns sources = do
       (tid, state) <- fromFoldable sources
       guard $ state `match` i
       updateTid
-      tid' <- liftLT StateM.get
+      tid' <- lift StateM.get
       (tid', App1 nn tid) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
         ((tid', state `update` o) : sources)
@@ -60,9 +60,9 @@ genFromSources depth e@(Env m) nns sources = do
             && state1 `match` i1
             && state2 `match` i2
       updateTid
-      tid' <- liftLT StateM.get
+      tid' <- lift StateM.get
       (tid', App2 nn tid1 tid2) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
         ((tid' , state1 `update` o) : sources)
   where
-    updateTid = liftLT $ StateM.modify (+1)
+    updateTid = lift $ StateM.modify (+1)

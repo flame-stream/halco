@@ -23,5 +23,5 @@ maximumIntegral :: Integral a => [a] -> a
 maximumIntegral [] = 0
 maximumIntegral xs = maximum xs
 
-liftLT :: Monad m => m a -> ListT m a
-liftLT = ListT . fmap (\a -> Just (a, mempty))
+nilLT :: Monad m => ListT m a
+nilLT = ListT $ pure Nothing
