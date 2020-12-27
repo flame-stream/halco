@@ -38,6 +38,9 @@ library:
   dependencies:
     - either
     - containers >= 0.6
+    - mtl
+    - list-t
+    - transformers
 
 executables:
   calcohs-exe:
