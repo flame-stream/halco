@@ -44,6 +44,9 @@ library
       base >=4.7 && <5
     , containers >=0.6
     , either
+    , list-t
+    , mtl
+    , transformers
   default-language: Haskell2010
 
 executable calcohs-exe

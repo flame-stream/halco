@@ -2,6 +2,7 @@ module Calco.Utils where
 
 import           Data.Map (Map, (!?))
 import qualified Data.Map as Map
+import           ListT
 
 countOccs :: (Traversable t, Ord k, Integral i) => t k -> Map k i
 countOccs = foldr f Map.empty
@@ -21,3 +22,6 @@ findKeys x = map fst . filter ((== x) . snd) . Map.toList
 maximumIntegral :: Integral a => [a] -> a
 maximumIntegral [] = 0
 maximumIntegral xs = maximum xs
+
+nilLT :: Monad m => ListT m a
+nilLT = ListT $ pure Nothing
