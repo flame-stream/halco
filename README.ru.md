@@ -7,6 +7,8 @@ CALculations by COntracts.
 - **calcohs** - прототип/формализация на Haskell
 - **calco** - библиотека расширяющая Apache Beam Python API ц-графами
 
+Подробнее про прогресс на конец 2020го года можно почитать в [отчете](https://github.com/flame-stream/calco/blob/master/docs/students/Andrey%20Stoyan/report1/report1.pdf).
+
 
 ## Проблема
 
