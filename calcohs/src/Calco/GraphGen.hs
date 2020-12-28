@@ -24,17 +24,20 @@ genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e@(Env m), s) =
   let ss = zip [1..] $ streams e
       consts = (Const <$>) <$> ss
-      g = genFromSources 10 e
+      g = genFromSources 5 e
         (Set.fromList $ tfms e)
         (fmap (toState . stream e) <$> ss)
       tidMax = fst $ last ss
       bigGraph = graph $ consts ++ StateM.evalState (toList g) tidMax
-   in map (bigGraph `cut`) $ semanticsTids bigGraph s
+      graphs = map (bigGraph `cut`) $ semanticsTids bigGraph s
+   in filter noSameNodes graphs
   where
     semanticsTids :: Graph -> Semantics -> [Set TermId]
     semanticsTids g = (Set.fromList <$>)
                     . cartesianProduct . (findIds g <$>)
                     . Set.toList
+    noSameNodes :: Graph -> Bool
+    noSameNodes = all (== (1 :: Integer)) . Map.elems . countOccs . nodeNames
 
 genFromSources :: ContContext a p i o
                => Int -> Env i o -> Set NodeName
@@ -46,7 +49,7 @@ genFromSources depth e@(Env m) nns sources = do
   m ! nn & \case
     Stream _ -> error "Streams should be only in sources"
     Tfm1 i o -> do
-      (tid, state) <- fromFoldable sources
+      (tid, state) <- sourcesLT
       guard $ state `match` i
       updateTid
       tid' <- lift StateM.get
@@ -54,8 +57,8 @@ genFromSources depth e@(Env m) nns sources = do
         (nn `Set.delete` nns)
         ((tid', state `update` o) : sources)
     Tfm2 i1 i2 o -> do
-      (tid1, state1) <- fromFoldable sources
-      (tid2, state2) <- fromFoldable sources
+      (tid1, state1) <- sourcesLT
+      (tid2, state2) <- sourcesLT
       guard $ tid1 /= tid2
             && state1 `match` i1
             && state2 `match` i2
@@ -63,6 +66,7 @@ genFromSources depth e@(Env m) nns sources = do
       tid' <- lift StateM.get
       (tid', App2 nn tid1 tid2) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
-        ((tid' , state1 `update` o) : sources)
+        ((tid' , (state1 <> state2) `update` o) : sources)
   where
     updateTid = lift $ StateM.modify (+1)
+    sourcesLT = fromFoldable sources
