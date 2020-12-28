@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs      #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Calco.GraphGen where
+module Calco.GraphGen (genGraphs) where
 
 import           Control.Monad             (guard)
 import qualified Control.Monad.State       as StateM

@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module Examples.Pets.Base (cograph) where
+module Examples.Pets.Base (cgraph) where
 
 import qualified Data.Map         as Map
 import qualified Data.Set         as Set
@@ -11,8 +11,8 @@ import           Calco.DSL
 
 import           Examples.Pets
 
-cograph :: CGraph InCont OutCont
-cograph = (, petsSemantics) $ env
+cgraph :: CGraph InCont OutCont
+cgraph = (, petsSemantics) $ env
   [ "pets"    `ap0` outCont ["pet.id", "pet.name", "pet.age", "pet.breedId"] [] []
   , "persons" `ap0` outCont ["person.id", "person.name", "person.age"] [] []
   , "friends" `ap0` outCont ["personId", "petId"] [] []
