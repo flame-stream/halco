@@ -9,11 +9,12 @@ import qualified Data.Map      as Map
 import           Data.Set      (Set)
 import qualified Data.Set      as Set
 
-import           Calco.CGraph  (Semantics)
 import           Calco.Defs    (NodeName)
 import           Calco.Utils   (findKeys)
 
 type TermId = Integer
+
+type SemanticIds = Set TermId
 
 data Term =
     Const NodeName
@@ -48,7 +49,7 @@ nodeName = \case
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
 
-extractPipeline :: Graph -> Set TermId -> Graph
+extractPipeline :: Graph -> SemanticIds -> Graph
 extractPipeline g tids = Map.foldrWithKey f empty $ toMap g
   where
     f :: TermId -> Term -> Graph -> Graph
