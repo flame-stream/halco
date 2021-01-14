@@ -32,7 +32,8 @@ library
       Calco.Defs
       Calco.DSL
       Calco.Graph
-      Calco.GraphGen
+      Calco.GraphGen.Base
+      Calco.GraphGen.Fast
       Calco.State
       Calco.Utils
   other-modules:

@@ -10,8 +10,8 @@ import qualified Data.Map      as Map
 import           Data.Set      (Set)
 import qualified Data.Set      as Set
 
-import           Calco.Conts
-import           Calco.Defs
+import           Calco.Conts   (InCont, OutCont)
+import           Calco.Defs    (NodeName)
 
 data Node i o where
   Stream :: OutCont o => o -> Node i o
@@ -27,6 +27,21 @@ type CGraph i o = (Env i o, Semantics)
 
 env :: [(NodeName, Node i o)] -> Env i o
 env = Env . Map.fromList
+
+semantics :: [NodeName] -> Semantics
+semantics = Set.fromList
+
+envToList :: Env i o -> [(NodeName, Node i o)]
+envToList (Env m) = Map.toList m
+
+nodeNamesP :: (Node i o -> Bool) -> Env i o -> [NodeName]
+nodeNamesP p = map fst . filter (p . snd) . envToList
+
+streams :: Env i o -> [NodeName]
+streams = nodeNamesP isStream
+
+tfms :: Env i o -> [NodeName]
+tfms = nodeNamesP isTfm
 
 stream :: Env i o -> NodeName -> o
 stream (Env m) nn = m ! nn & \case
@@ -53,15 +68,3 @@ isTfm = \case
   Stream _ -> False
   Tfm1 {}  -> True
   Tfm2 {}  -> True
-
-nodeNamesP :: (Node i o -> Bool) -> Env i o -> [NodeName]
-nodeNamesP p (Env m) = map fst . filter (p . snd) $ Map.toList m
-
-streams :: Env i o -> [NodeName]
-streams = nodeNamesP isStream
-
-tfms :: Env i o -> [NodeName]
-tfms = nodeNamesP isTfm
-
-semantics :: [NodeName] -> Semantics
-semantics = Set.fromList

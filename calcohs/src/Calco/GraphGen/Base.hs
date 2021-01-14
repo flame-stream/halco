@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs      #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Calco.GraphGen (genGraphs) where
+module Calco.GraphGen.Base where
 
 import           Control.Monad             (guard)
 import qualified Control.Monad.State       as StateM
@@ -24,12 +24,12 @@ genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e@(Env m), s) =
   let ss = zip [1..] $ streams e
       consts = (Const <$>) <$> ss
-      g = genFromSources 5 e
+      terms = genFromSources 5 e
         (Set.fromList $ tfms e)
         (fmap (toState . stream e) <$> ss)
       tidMax = fst $ last ss
-      bigGraph = graph $ consts ++ StateM.evalState (toList g) tidMax
-      graphs = map (bigGraph `cut`) $ semanticsTids bigGraph s
+      bigGraph = graph $ consts ++ StateM.evalState (ListT.toList terms) tidMax
+      graphs = map (bigGraph `extractPipeline`) $ semanticsTids bigGraph s
    in filter noSameNodes graphs
   where
     semanticsTids :: Graph -> Semantics -> [Set TermId]
@@ -39,8 +39,10 @@ genGraphs (e@(Env m), s) =
     noSameNodes :: Graph -> Bool
     noSameNodes = all (== (1 :: Integer)) . Map.elems . countOccs . nodeNames
 
+-- TODO
 genFromSources :: ContContext a p i o
-               => Int -> Env i o -> Set NodeName
+               => Int -- Depth of the graph to generate
+               -> Env i o -> Set NodeName
                -> [(TermId, State a p)]
                -> ListT (StateM.State TermId) (TermId, Term)
 genFromSources 0 _ _ _ = nilLT

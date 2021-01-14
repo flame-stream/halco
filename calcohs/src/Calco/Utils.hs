@@ -4,6 +4,7 @@ import           Data.Map (Map, (!?))
 import qualified Data.Map as Map
 import           ListT
 
+-- Counts occurences of each element in traversable.
 countOccs :: (Traversable t, Ord k, Integral i) => t k -> Map k i
 countOccs = foldr f Map.empty
   where
@@ -14,7 +15,7 @@ countOccs = foldr f Map.empty
 cartesianProduct :: [[a]] -> [[a]]
 cartesianProduct []       = []
 cartesianProduct [xs]     = (: []) <$> xs
-cartesianProduct (xs:xss) = [x : ys | ys <- cartesianProduct xss, x <- xs]
+cartesianProduct (xs:xss) = (:) <$> xs <*> cartesianProduct xss
 
 findKeys :: (Ord k, Eq a) => a -> Map k a -> [k]
 findKeys x = map fst . filter ((== x) . snd) . Map.toList
@@ -25,3 +26,8 @@ maximumIntegral xs = maximum xs
 
 nilLT :: Monad m => ListT m a
 nilLT = ListT $ pure Nothing
+
+infixl 4 <$$>
+fmap2, (<$$>) :: (Functor f, Functor g) => (a -> b) -> g (f a) -> g (f b)
+fmap2 = fmap . fmap
+(<$$>) = fmap2

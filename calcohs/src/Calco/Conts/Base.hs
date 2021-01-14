@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase   #-}
 {-# LANGUAGE TypeFamilies #-}
 
 module Calco.Conts.Base where
@@ -38,8 +39,8 @@ inCont as ps p's = InCont
   }
 
 instance Conts.InCont InCont where
-  type AT InCont = Attr
-  type PT InCont = Prop
+  type ATi InCont = Attr
+  type PTi InCont = Prop
 
   emptyIn = InCont { attrsI = Set.empty
                    , propsI = Set.empty
@@ -54,6 +55,11 @@ data OutAttrs =
   | NewAttrs (Set Attr)
   deriving (Show)
 
+updateAttrs :: State Attr p -> OutAttrs -> Set Attr
+updateAttrs s = \case
+  AddAttrs attrs' -> attrs' <> attrs s
+  NewAttrs attrs' -> attrs'
+
 data OutCont = OutCont
   { attrsO  :: OutAttrs -- Changes in attrs set
   , propsO  :: Set Prop -- Properties to be added
@@ -61,7 +67,8 @@ data OutCont = OutCont
   }
   deriving (Show)
 
-outCont' :: (Set Attr -> OutAttrs) -> [NodeName] -> [NodeName] -> [NodeName] -> OutCont
+outCont' :: (Set Attr -> OutAttrs)
+         -> [NodeName] -> [NodeName] -> [NodeName] -> OutCont
 outCont' ctor as ps p's = OutCont
   { attrsO  = ctor $ Set.fromList $ map Attr as
   , propsO  = Set.fromList $ map Prop ps
@@ -73,17 +80,12 @@ outCont  = outCont' AddAttrs
 outContN = outCont' NewAttrs
 
 instance Conts.OutCont OutCont where
-  type AT' OutCont = Attr
-  type PT' OutCont = Prop
+  type ATo OutCont = Attr
+  type PTo OutCont = Prop
 
   emptyOut = OutCont { attrsO = AddAttrs Set.empty
                      , propsO = Set.empty
                      , propsO' = Set.empty }
 
-  update s c =
-    State { attrs = attrs'
-          , props = propsO c <> (props s \\ propsO' c) }
-    where
-      attrs' = case attrsO c of
-        AddAttrs attrs' -> attrs' <> attrs s
-        NewAttrs attrs' -> attrs'
+  update s c = State { attrs = updateAttrs s $ attrsO c
+                     , props = propsO c <> (props s \\ propsO' c) }

@@ -13,10 +13,7 @@ import           Calco.CGraph
 import           Calco.Conts
 import           Calco.Graph
 import           Calco.State             (State)
-import qualified Calco.State             as State
-import           Calco.Utils
-
-type CheckedTerms a p = Map TermId (State a p)
+import           Calco.Utils             (countOccs)
 
 data CheckGraphError a p i =
     CME (ContMatchError a p i)
@@ -33,6 +30,8 @@ hasSemantics :: Graph -> Semantics -> Bool
 hasSemantics g s =
   let occs = countOccs $ nodeNames g
    in all ((== (1 :: Integer)) . (occs !)) s
+
+type CheckedTerms a p = Map TermId (State a p)
 
 checkTerm :: ContContext a p i o
           => Env i o -> Graph
