@@ -14,7 +14,7 @@ import           Calco.Utils   (findKeys)
 
 type TermId = Integer
 
-type SemanticIds = Set TermId
+type SemanticTids = Set TermId
 
 data Term =
     Const NodeName
@@ -32,7 +32,7 @@ toMap :: Graph -> Map TermId Term
 toMap (Graph m) = m
 
 toList :: Graph -> [(TermId, Term)]
-toList (Graph m) = Map.toList m
+toList = Map.toList . toMap
 
 empty :: Graph
 empty = graph []
@@ -49,7 +49,7 @@ nodeName = \case
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
 
-extractPipeline :: Graph -> SemanticIds -> Graph
+extractPipeline :: Graph -> SemanticTids -> Graph
 extractPipeline g tids = Map.foldrWithKey f empty $ toMap g
   where
     f :: TermId -> Term -> Graph -> Graph

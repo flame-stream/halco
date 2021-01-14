@@ -32,7 +32,7 @@ genGraphs (e, s) =
       graphs = map (bigGraph `extractPipeline`) $ semanticsTids bigGraph s
    in filter noSameNodes graphs -- Every semantics node also will occur only once.
   where
-    semanticsTids :: Graph -> Semantics -> [SemanticIds]
+    semanticsTids :: Graph -> Semantics -> [SemanticTids]
     semanticsTids g = (Set.fromList <$>)
                     . cartesianProduct . (findIds g <$>)
                     . Set.toList
@@ -71,7 +71,7 @@ genFromSources depth e@(Env m) nns sources = do
       tid' <- getTid
       (tid', App2 nn tid1 tid2) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
-        ((tid' , (state1 <> state2) `update` o) : sources)
+        ((tid', (state1 <> state2) `update` o) : sources)
   where
     getTid = lift StateM.get
     updateTid = lift $ StateM.modify (+1)
