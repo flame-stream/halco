@@ -17,34 +17,23 @@ import           Calco.CGraph
 import           Calco.Conts
 import           Calco.Defs
 import           Calco.Graph
+import           Calco.GraphGen.Utils      (Source, graphSources)
 import           Calco.State
-import           Calco.Utils
+import           Calco.Utils               (nilLT)
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =
-  let enumeratedStreams = zip [1..] $ streams e
-      consts = Const <$$> enumeratedStreams
-      terms = genFromSources 5 e
-        (Set.fromList $ tfms e)
-        (toState . stream e <$$> enumeratedStreams)
-      tidMax = fst $ last enumeratedStreams
+  let (sources, consts, tidMax) = graphSources e
+      terms = genFromSources 5 e (Set.fromList $ tfms e) sources
       bigGraph = graph $ consts ++ StateM.evalState (ListT.toList terms) tidMax
-      graphs = map (bigGraph `extractPipeline`) $ semanticsTids bigGraph s
+      graphs = map (bigGraph `extractPipeline`) $ semanticTids bigGraph s
    in filter noSameNodes graphs -- Every semantics node also will occur only once.
-  where
-    semanticsTids :: Graph -> Semantics -> [SemanticTids]
-    semanticsTids g = (Set.fromList <$>)
-                    . cartesianProduct . (findIds g <$>)
-                    . Set.toList
-
-    noSameNodes :: Graph -> Bool
-    noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
 
 genFromSources :: ContContext a p i o
                => Int                     -- Depth of the graph to generate.
                -> Env i o
                -> Set NodeName            -- Available transformations to use in graph.
-               -> [(TermId, State a p)]   -- List of sources.
+               -> [Source a p]
                -> ListT
                     (StateM.State TermId) -- Last used term id in graph.
                     (TermId, Term)
@@ -74,7 +63,7 @@ genFromSources depth e@(Env m) nns sources = do
         ((tid', (state1 <> state2) `update` o) : sources)
   where
     getTid = lift StateM.get
-    updateTid = lift $ StateM.modify (+1)
+    updateTid = lift $ StateM.modify (+ 1)
 
     nnsLT = fromFoldable nns
     sourcesLT = fromFoldable sources

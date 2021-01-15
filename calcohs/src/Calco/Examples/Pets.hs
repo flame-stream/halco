@@ -1,6 +1,4 @@
-module Examples.Pets where
-
-import           Test.Hspec
+module Calco.Examples.Pets where
 
 import           Calco.Check
 import           Calco.CGraph

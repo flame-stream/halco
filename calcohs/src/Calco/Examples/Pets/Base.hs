@@ -1,15 +1,14 @@
 {-# LANGUAGE TupleSections #-}
 
-module Examples.Pets.Base (cgraph) where
+module Calco.Examples.Pets.Base (cgraph) where
 
-import qualified Data.Map         as Map
-import qualified Data.Set         as Set
+import qualified Data.Map            as Map
+import qualified Data.Set            as Set
 
 import           Calco.CGraph
 import           Calco.Conts.Base
 import           Calco.DSL
-
-import           Examples.Pets
+import           Calco.Examples.Pets
 
 cgraph :: CGraph InCont OutCont
 cgraph = (, petsSemantics) $ env

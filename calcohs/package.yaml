@@ -41,6 +41,7 @@ library:
     - mtl
     - list-t
     - transformers
+    - extra
 
 executables:
   calcohs-exe:

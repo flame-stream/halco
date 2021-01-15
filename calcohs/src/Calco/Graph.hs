@@ -9,8 +9,9 @@ import qualified Data.Map      as Map
 import           Data.Set      (Set)
 import qualified Data.Set      as Set
 
+import           Calco.CGraph  (Semantics)
 import           Calco.Defs    (NodeName)
-import           Calco.Utils   (findKeys)
+import           Calco.Utils   (cartesianProduct, countOccs, findKeys)
 
 type TermId = Integer
 
@@ -69,3 +70,11 @@ extractPipeline' g@(Graph m) tid = m ! tid & Graph . \case
 
 findIds :: Graph -> NodeName -> [TermId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m
+
+semanticTids :: Graph -> Semantics -> [SemanticTids]
+semanticTids g = (Set.fromList <$>)
+                . cartesianProduct . (findIds g <$>)
+                . Set.toList
+
+noSameNodes :: Graph -> Bool
+noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames

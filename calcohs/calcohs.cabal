@@ -31,9 +31,12 @@ library
       Calco.Cost
       Calco.Defs
       Calco.DSL
+      Calco.Examples.Pets
+      Calco.Examples.Pets.Base
       Calco.Graph
       Calco.GraphGen.Base
       Calco.GraphGen.Fast
+      Calco.GraphGen.Utils
       Calco.State
       Calco.Utils
   other-modules:
@@ -45,6 +48,7 @@ library
       base >=4.7 && <5
     , containers >=0.6
     , either
+    , extra
     , list-t
     , mtl
     , transformers
@@ -66,8 +70,6 @@ test-suite calcohs-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Examples.Pets
-      Examples.Pets.Base
       Paths_calcohs
   hs-source-dirs:
       test
