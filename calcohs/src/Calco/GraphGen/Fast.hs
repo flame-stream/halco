@@ -1,59 +1,69 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GADTs         #-}
+{-# LANGUAGE TupleSections #-}
 
 module Calco.GraphGen.Fast where
 
 import qualified Control.Monad.State  as StateM
-import           Data.Tuple.Extra     (uncurry3)
+import           Data.Set             (Set)
+import qualified Data.Set             as Set
 import           Debug.Trace
 
-import           Calco.CGraph         (CGraph, Env (..), tfm1, tfm2, tfms1,
-                                       tfms2)
+import           Calco.CGraph         (CGraph, Env (..), tfm1, tfm2, tfms,
+                                       tfms1, tfms2)
 import           Calco.Conts          (ContContext, match, update)
+import           Calco.Defs           (NodeName)
 import           Calco.Graph          (Graph, Term (..), TermId,
                                        extractPipeline, graph, noSameNodes,
-                                       semanticTids)
+                                       nodeName, semanticTids)
 import           Calco.GraphGen.Utils (Source, graphSources)
 import           Calco.State          (State)
-import           Calco.Utils          ((<$$>))
+import           Calco.Utils          (sndthd3, (<$$>))
+import           Data.Tuple.Extra     (fst3)
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =
   let (sources, consts, tidMax) = graphSources e
-      terms = genFromSources 4 e tidMax sources
+      nTfms = length $ tfms e
+      terms = genFromSources nTfms e tidMax ((, Set.empty) <$> sources) Set.empty
       bigGraph = graph $ consts ++ terms
       graphs = map (bigGraph `extractPipeline`) $ semanticTids bigGraph s
    in filter noSameNodes graphs -- Every semantics node also will occur only once.
 
 genFromSources :: ContContext a p i o
-               => Int              -- Graph depth.
+               => Int                          -- Graph depth.
                -> Env i o
-               -> TermId           -- Maximal used term id.
-               -> [Source a p]
+               -> TermId                       -- Maximal used term id.
+               -> [(Source a p, Set NodeName)] -- Partiicular transformations are used
+                                               -- to make up source.
+               -> Set Term                     -- Already generated terms of transformations.
                -> [(TermId, Term)]
-genFromSources 0 _ _ _ = []
-genFromSources d e tid sources = do -- TODO do for traceM
+genFromSources 0 _ _ _ _ = []
+genFromSources d e tid sources terms =
   let sources1 = zip
         [tid + 1..]
-        [((nn, tid), s `update` o)
-          | (tid, s) <- sources
+        [(app, s `update` o, nn `Set.insert` nns)
+          | ((tid, s), nns) <- sources
           , nn <- tfms1 e
+          , nn `Set.notMember` nns
+          , let app = App1 nn tid
+          , app `Set.notMember` terms
           , let (i, o) = tfm1 e nn
           , s `match` i]
       tid' = if null sources1
         then tid
         else fst $ last sources1
 
-  traceM $ "tid' = " <> show tid'
-        <> " d = " <> show d
-        <> " len sources1 = " <> show (length sources1)
-
-  let sources2 = zip
+      sources2 = zip
         [tid' + 1..]
-        [((nn, tid1, tid2), (s1 <> s2) `update` o)
-          | (tid1, s1) <- sources
-          , (tid2, s2) <- sources
+        [(app, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
+          | ((tid1, s1), nns1) <- sources
+          , ((tid2, s2), nns2) <- sources
           , tid1 /= tid2
           , nn <- tfms2 e
+          , nn `Set.notMember` nns1
+          , nn `Set.notMember` nns2
+          , let app = App2 nn tid1 tid2
+          , app `Set.notMember` terms
           , let (i1, i2, o) = tfm2 e nn
           , s1 `match` i1
           , s2 `match` i2]
@@ -61,12 +71,10 @@ genFromSources d e tid sources = do -- TODO do for traceM
         then tid'
         else fst $ last sources2
 
-  traceM $ "tid'' = " <> show tid''
-        <> " d = " <> show d
-        <> " len sources2 = " <> show (length sources2)
-
-  let terms1 = uncurry App1 <$$> (fst <$$> sources1)
-      terms2 = uncurry3 App2 <$$> (fst <$$> sources2)
-      terms' = genFromSources (d - 1) e tid''
-             $ sources ++ (snd <$$> sources1) ++ (snd <$$> sources2)
-   in terms1 ++ terms2 ++ terms'
+      terms1 = fst3 <$$> sources1
+      terms2 = fst3 <$$> sources2
+      sources' = sources ++ (toSource <$> sources1) ++ (toSource <$> sources2)
+      terms' = terms <> Set.fromList (snd <$> terms1) <> Set.fromList (snd <$> terms2)
+   in terms1 ++ terms2 ++ genFromSources (d - 1) e tid'' sources' terms'
+  where
+    toSource (tid, (t, s, nns)) = ((tid, s), nns)

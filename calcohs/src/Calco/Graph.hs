@@ -21,7 +21,7 @@ data Term =
     Const NodeName
   | App1 NodeName TermId
   | App2 NodeName TermId TermId
-  deriving (Show)
+  deriving (Show, Eq, Ord)
 
 newtype Graph = Graph (Map TermId Term)
   deriving (Show)
