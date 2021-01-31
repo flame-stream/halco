@@ -78,3 +78,23 @@ semanticTids g = (Set.fromList <$>)
 
 noSameNodes :: Graph -> Bool
 noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
+
+
+graph2Dot :: Graph -> String -> String
+graph2Dot g name = let 
+    prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {"
+    delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") -- split by \n only if appending non-empty string (x) 
+    strGraph = foldr (delim . edge2dot) prefix (toList g)
+    suffix = "\n}\n"
+  in strGraph ++ suffix
+  where
+    edge2dot :: (TermId, Term) -> String
+    edge2dot (id, Const nn) = ""
+    edge2dot (id, App1 nn inputId) = nameLookup inputId  ++ " -> " ++ "\"" ++ nn ++ "\""
+    edge2dot (id, App2 nn inputId1 inputId2) = let
+        edge1 = nameLookup inputId1 ++ " -> " ++ "\"" ++ nn ++ "\""
+        edge2 = nameLookup inputId2 ++ " -> " ++ "\"" ++ nn ++ "\""
+      in edge1 ++ "\n" ++ edge2
+
+    nameLookup :: TermId -> String
+    nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Const "undefined id") id (toMap g)) ++ "\""
