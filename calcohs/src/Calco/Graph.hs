@@ -81,12 +81,14 @@ noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
 
 
 graph2Dot :: Graph -> String -> String
-graph2Dot g name = let 
-    prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {"
+graph2Dot g name = let
+    prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {\n"
+
     delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") -- split by \n only if appending non-empty string (x) 
-    strGraph = foldr (delim . edge2dot) prefix (toList g)
+    vtxes = foldr (delim . (\x -> "\"" ++ x ++ "\"")) "" (nodeNames g :: [String])
+    strGraph = foldr (delim . edge2dot) "" (toList g)
     suffix = "\n}\n"
-  in strGraph ++ suffix
+  in prefix ++ vtxes ++ strGraph ++ suffix
   where
     edge2dot :: (TermId, Term) -> String
     edge2dot (id, Const nn) = ""
