@@ -53,7 +53,7 @@ tfms2 :: Env i o -> [NodeName]
 tfms2 = nodeNamesP isTfm2
 
 tfms2C :: Env i o -> [(i, i, o)]
-tfms2C e = map (tfm2 e) (tfms1 e)
+tfms2C e = map (tfm2 e) (tfms2 e)
 
 stream :: Env i o -> NodeName -> o
 stream (Env m) nn = m ! nn & \case
