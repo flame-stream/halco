@@ -1,5 +1,6 @@
 from typing import Set, Tuple, Union, Dict, Callable
 from .defs import NodeName
+from .conts import OutCont, InCont
 
 
 Stream = Tuple[OutCont]
