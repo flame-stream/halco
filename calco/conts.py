@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Set
+# from typing import Set
+from pyrsistent import PSet
 
 from .defs import NodeName, Attr, Prop
 from .state import State
@@ -7,9 +8,9 @@ from .state import State
 
 @dataclass
 class InCont:
-    attrs: Set[Attr]
-    props: Set[Prop]
-    propsp: Set[Prop]  # Prohibited props
+    attrs: PSet[Attr]
+    props: PSet[Prop]
+    propsp: PSet[Prop]  # Prohibited props
 
     def match(self, s: State) -> bool:
         return (self.attrs.issubset(s.attrs) and
@@ -19,13 +20,13 @@ class InCont:
 
 @dataclass
 class OutCont:
-    attrs: Set[Attr]
+    attrs: PSet[Attr]
     rem: bool  # Will old attributes be removed
-    props: Set[Prop]
-    propsr: Set[Prop]  # Props to be removed
+    props: PSet[Prop]
+    propsr: PSet[Prop]  # Props to be removed
 
     def update(self, s: State) -> State:
         return State(
             attrs=self.attrs if self.rem else self.attrs | s.attrs,
-            props=self.props | (s.props - c.propsr)
+            props=self.props | (s.props - self.propsr)
         )
