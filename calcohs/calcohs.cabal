@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      Calco.Beam
       Calco.CGraph
       Calco.Check
       Calco.Conts

@@ -32,5 +32,7 @@ fmap2, (<$$>) :: (Functor f, Functor g) => (a -> b) -> g (f a) -> g (f b)
 fmap2 = fmap . fmap
 (<$$>) = fmap2
 
-sndthd3 :: (a, b, c) -> (b, c)
-sndthd3 (x, y, z) = (y, z)
+insertOrApply :: Ord k => k -> v -> (v -> v) -> Map k v -> Map k v
+insertOrApply k v f m = case m !? k of
+  Just v' -> Map.insert k (f v') m
+  Nothing -> Map.insert k v m

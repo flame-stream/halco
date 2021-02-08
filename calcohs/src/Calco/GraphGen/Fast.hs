@@ -17,7 +17,7 @@ import           Calco.Graph          (Graph, Term (..), TermId,
                                        nodeName, semanticTids)
 import           Calco.GraphGen.Utils (Source, graphSources)
 import           Calco.State          (State)
-import           Calco.Utils          (sndthd3, (<$$>))
+import           Calco.Utils          ((<$$>))
 import           Data.Tuple.Extra     (fst3)
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]

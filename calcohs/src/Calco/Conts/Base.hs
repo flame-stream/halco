@@ -42,8 +42,8 @@ instance Conts.InCont InCont where
   type ATi InCont = Attr
   type PTi InCont = Prop
 
-  emptyIn = InCont { attrsI = Set.empty
-                   , propsI = Set.empty
+  emptyIn = InCont { attrsI  = Set.empty
+                   , propsI  = Set.empty
                    , propsI' = Set.empty }
 
   match s c = attrsI c `Set.isSubsetOf` attrs s
@@ -83,8 +83,8 @@ instance Conts.OutCont OutCont where
   type ATo OutCont = Attr
   type PTo OutCont = Prop
 
-  emptyOut = OutCont { attrsO = AddAttrs Set.empty
-                     , propsO = Set.empty
+  emptyOut = OutCont { attrsO  = AddAttrs Set.empty
+                     , propsO  = Set.empty
                      , propsO' = Set.empty }
 
   update s c = State { attrs = updateAttrs s $ attrsO c

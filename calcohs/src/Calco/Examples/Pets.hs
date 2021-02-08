@@ -1,7 +1,8 @@
 module Calco.Examples.Pets where
 
-import           Calco.Check
+import           Calco.Beam
 import           Calco.CGraph
+import           Calco.Check
 import           Calco.DSL
 import           Calco.Graph
 
@@ -37,3 +38,32 @@ graph1 = graph
   , 11 ->> App2 "joinPersonsFriends" 2 10
   , 12 ->> App2 "joinPetsBreeds" 11 4
   ]
+
+graph1Beam :: ( [Stream e] -- Pet names
+              , [Stream e] -- Perople witn pets
+              , [Stream e] -- Breeds
+              )
+graph1Beam = (petNamesStats, priceNames, nameBreedCorr)
+  where
+    pets :: Stream e
+    pets = undefined
+    -- persons :: Stream e
+    -- persons = undefined
+    -- friends :: Stream e
+    -- friends = undefined
+    -- breeds :: Stream e
+    -- breeds = undefined
+
+    petNamesStats :: Stream e
+    petNamesStats = pardo undefined pets
+
+    -- filterDinosaurs :: Stream e
+    -- filterDinosaurs = pardo undefined petNamesStats
+
+    -- joinPetsFriends :: [Elem a v]
+    -- joinPetsFriends = coGroupByKey
+    --   ("filterDinosaurs", [zip undefined filterDinosaurs])
+    --   ("friends", [zip undefined, friends])
+
+    priceNames = undefined
+    nameBreedCorr = undefined
