@@ -3,13 +3,13 @@
 
 module Calco.Conts.Base where
 
-import           Data.Set    (Set, (\\))
-import qualified Data.Set    as Set
+import           Data.Set          (Set, (\\))
+import qualified Data.Set          as Set
 
-import qualified Calco.Conts as Conts
-import           Calco.Defs  (NodeName)
-import qualified Calco.Defs  as Defs
-import           Calco.State (State (State), attrs, props)
+import qualified Calco.Conts.Types as Types
+import           Calco.Defs        (NodeName)
+import qualified Calco.Defs        as Defs
+import           Calco.State       (State (State), attrs, props)
 
 type AttrName = String
 type PropName = String
@@ -38,7 +38,7 @@ inCont as ps p's = InCont
   , propsI' = Set.fromList $ map Prop p's
   }
 
-instance Conts.InCont InCont where
+instance Types.InCont InCont where
   type ATi InCont = Attr
   type PTi InCont = Prop
 
@@ -79,7 +79,7 @@ outCont, outContN :: [NodeName] -> [NodeName] -> [NodeName] -> OutCont
 outCont  = outCont' AddAttrs
 outContN = outCont' NewAttrs
 
-instance Conts.OutCont OutCont where
+instance Types.OutCont OutCont where
   type ATo OutCont = Attr
   type PTo OutCont = Prop
 

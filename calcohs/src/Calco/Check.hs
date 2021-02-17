@@ -3,17 +3,17 @@
 
 module Calco.Check (checkGraph) where
 
-import           Control.Monad           (foldM)
-import           Data.Either.Combinators (mapLeft)
-import           Data.Map                (Map, (!))
-import qualified Data.Map                as Map
-import           Data.Set                (isSubsetOf)
+import           Control.Monad                (foldM)
+import           Data.Either.Combinators      (mapLeft)
+import           Data.Map                     (Map, (!))
+import qualified Data.Map                     as Map
+import           Data.Set                     (isSubsetOf)
 
 import           Calco.CGraph
-import           Calco.Conts
+import           Calco.Conts.Types
 import           Calco.Graph
-import           Calco.State             (State)
-import           Calco.Utils             (countOccs)
+import           Calco.State                  (State)
+import           Calco.Utils.Data.Traversable (countOccs)
 
 data CheckGraphError a p i =
     CME (ContMatchError a p i)

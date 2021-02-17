@@ -3,40 +3,41 @@
 
 module Calco.GraphGen.Fast where
 
-import qualified Control.Monad.State  as StateM
-import           Data.Set             (Set)
-import qualified Data.Set             as Set
+import qualified Control.Monad.State      as StateM
+import           Data.Set                 (Set)
+import qualified Data.Set                 as Set
 import           Debug.Trace
 
-import           Calco.CGraph         (CGraph, Env (..), tfm1, tfm2, tfms,
-                                       tfms1, tfms2)
-import           Calco.Conts          (ContContext, match, update)
-import           Calco.Defs           (NodeName)
-import           Calco.Graph          (Graph, Term (..), TermId,
-                                       extractPipeline, graph, noSameNodes,
-                                       nodeName, semanticTids)
-import           Calco.GraphGen.Utils (Source, graphSources)
-import           Calco.State          (State)
-import           Calco.Utils          ((<$$>))
-import           Data.Tuple.Extra     (fst3)
+import           Calco.CGraph             (CGraph, Env (..), tfm1, tfm2, tfms,
+                                           tfms1, tfms2)
+import           Calco.Conts.Types        (ContContext, match, update)
+import           Calco.Defs               (NodeName)
+import           Calco.Graph              (Graph, Term (..), TermId,
+                                           extractPipeline, graph, noSameNodes,
+                                           nodeName, semanticTids)
+import           Calco.GraphGen.Utils     (Source, graphSources)
+import           Calco.State              (State)
+import           Calco.Utils.Data.Functor ((<$$>))
+import           Data.Tuple.Extra         (fst3)
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =
   let (sources, consts, tidMax) = graphSources e
       nTfms = length $ tfms e
-      terms = genFromSources nTfms e tidMax ((, Set.empty) <$> sources) Set.empty
-      bigGraph = graph $ consts ++ terms
+      apps = genFromSources nTfms e tidMax ((, Set.empty) <$> sources) Set.empty
+      bigGraph = graph $ consts ++ apps
       graphs = map (bigGraph `extractPipeline`) $ semanticTids bigGraph s
    in filter noSameNodes graphs -- Every semantics node also will occur only once.
 
 genFromSources :: ContContext a p i o
-               => Int                          -- Graph depth.
+               => Int                 -- Graph depth.
                -> Env i o
-               -> TermId                       -- Maximal used term id.
-               -> [(Source a p, Set NodeName)] -- Partiicular transformations are used
-                                               -- to make up source.
-               -> Set Term                     -- Already generated terms of transformations.
-               -> [(TermId, Term)]
+               -> TermId              -- Maximal used term id.
+               -> [( Source a p       -- All available sources to make graph next layer.
+                   , Set NodeName )]  -- Particular transformations that were used
+                                      -- to make up source.
+               -> Set Term            -- Already generated terms of transformations.
+               -> [(TermId, Term)]    -- Terms of the all possible graphs with the given depth.
 genFromSources 0 _ _ _ _ = []
 genFromSources d e tid sources terms =
   let sources1 = zip

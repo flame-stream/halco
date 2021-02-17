@@ -3,18 +3,21 @@
 
 module Calco.Graph where
 
-import           Data.Function ((&))
-import           Data.Map      (Map, (!))
-import qualified Data.Map      as Map
-import           Data.Set      (Set)
-import qualified Data.Set      as Set
+import           Data.Function                ((&))
+import           Data.Map                     (Map, (!))
+import qualified Data.Map                     as Map
+import           Data.Set                     (Set)
+import qualified Data.Set                     as Set
 
-import           Calco.CGraph  (Semantics)
-import           Calco.Defs    (NodeName)
-import           Calco.Utils   (cartesianProduct, countOccs, findKeys)
+import           Calco.CGraph                 (Semantics)
+import           Calco.Defs                   (NodeName)
+import           Calco.Utils.Data.List        (cartesianProduct)
+import           Calco.Utils.Data.Map         (findKeys)
+import           Calco.Utils.Data.Traversable (countOccs)
 
 type TermId = Integer
 
+-- Set of tids that have terms in the graph that form its semantics.
 type SemanticTids = Set TermId
 
 data Term =
@@ -84,7 +87,7 @@ graph2Dot :: Graph -> String -> String
 graph2Dot g name = let
     prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {\n"
 
-    delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") -- split by \n only if appending non-empty string (x) 
+    delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") -- split by \n only if appending non-empty string (x)
     vtxes = foldr (delim . (\x -> "\"" ++ x ++ "\"")) "" (nodeNames g :: [String])
     strGraph = foldr (delim . edge2dot) "" (toList g)
     suffix = "\n}\n"

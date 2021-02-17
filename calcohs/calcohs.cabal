@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.2.
+-- This file has been generated from package.yaml by hpack version 0.34.3.
 --
 -- see: https://github.com/sol/hpack
 
@@ -27,8 +27,8 @@ library
       Calco.Beam
       Calco.CGraph
       Calco.Check
-      Calco.Conts
       Calco.Conts.Base
+      Calco.Conts.Types
       Calco.Cost
       Calco.Defs
       Calco.DSL
@@ -39,7 +39,11 @@ library
       Calco.GraphGen.Fast
       Calco.GraphGen.Utils
       Calco.State
-      Calco.Utils
+      Calco.Utils.Data.Functor
+      Calco.Utils.Data.List
+      Calco.Utils.Data.Map
+      Calco.Utils.Data.Traversable
+      Calco.Utils.ListT
   other-modules:
       Paths_calcohs
   hs-source-dirs:

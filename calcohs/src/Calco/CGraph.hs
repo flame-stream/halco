@@ -4,14 +4,14 @@
 
 module Calco.CGraph where
 
-import           Data.Function ((&))
-import           Data.Map      (Map, (!))
-import qualified Data.Map      as Map
-import           Data.Set      (Set)
-import qualified Data.Set      as Set
+import           Data.Function     ((&))
+import           Data.Map          (Map, (!))
+import qualified Data.Map          as Map
+import           Data.Set          (Set)
+import qualified Data.Set          as Set
 
-import           Calco.Conts   (InCont, OutCont)
-import           Calco.Defs    (NodeName)
+import           Calco.Conts.Types (InCont, OutCont)
+import           Calco.Defs        (NodeName)
 
 data Node i o where
   Stream :: OutCont o => o -> Node i o

@@ -11,6 +11,7 @@ import           Calco.Defs
 
 type StateContext a p = (Attr a, Prop p)
 
+-- State of the stream on the graph's edge.
 data State a p where
   State :: StateContext a p
         => { attrs :: Set a

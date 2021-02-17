@@ -1,7 +1,7 @@
 module Calco.DSL where
 
 import           Calco.CGraph
-import           Calco.Conts
+import           Calco.Conts.Types
 import           Calco.Defs
 import           Calco.Graph
 

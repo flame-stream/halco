@@ -2,11 +2,11 @@
 
 module Calco.GraphGen.Utils where
 
-import           Calco.CGraph (Env, stream, streams)
-import           Calco.Conts
-import           Calco.Graph  (Term (..), TermId)
-import           Calco.State  (State)
-import           Calco.Utils  ((<$$>))
+import           Calco.CGraph             (Env, stream, streams)
+import           Calco.Conts.Types
+import           Calco.Graph              (Term (..), TermId)
+import           Calco.State              (State)
+import           Calco.Utils.Data.Functor ((<$$>))
 
 type Source a p = (TermId, State a p)
 

@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeFamilies     #-}
 
-module Calco.Conts where
+module Calco.Conts.Types where
 
 import           Data.Kind   (Type)
 

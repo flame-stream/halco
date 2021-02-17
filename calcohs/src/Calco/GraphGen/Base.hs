@@ -14,13 +14,14 @@ import qualified Data.Set                  as Set
 import           ListT
 
 import           Calco.CGraph
-import           Calco.Conts
+import           Calco.Conts.Types
 import           Calco.Defs
 import           Calco.Graph
 import           Calco.GraphGen.Utils      (Source, graphSources)
 import           Calco.State
-import           Calco.Utils               (nilLT)
+import           Calco.Utils.ListT         (nilLT)
 
+-- Very slow exponential algorithm, do not use it!
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =
   let (sources, consts, tidMax) = graphSources e

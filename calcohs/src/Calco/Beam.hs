@@ -2,11 +2,12 @@
 
 module Calco.Beam where
 
-import           Data.Map    (Map)
-import qualified Data.Map    as Map
+import           Data.Map                 (Map)
+import qualified Data.Map                 as Map
 
-import           Calco.Defs  (Attr)
-import           Calco.Utils (fmap2, insertOrApply)
+import           Calco.Defs               (Attr)
+import           Calco.Utils.Data.Functor (fmap2)
+import           Calco.Utils.Data.Map     (insertOrApply)
 
 type Stream e = [e]
 
