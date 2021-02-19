@@ -2,10 +2,10 @@
 
 module Main where
 
-import           Control.Monad            (forM_)
+import           Control.Monad       (forM_)
 
-import           Calco.Examples.Pets.Base
-import           Calco.Graph              (graph2Dot)
+import           Calco.Examples.Pets
+import           Calco.Graph         (graph2Dot)
 import           Calco.GraphGen.Fast
 
 main :: IO ()

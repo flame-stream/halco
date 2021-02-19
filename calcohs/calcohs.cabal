@@ -33,7 +33,6 @@ library
       Calco.Defs
       Calco.DSL
       Calco.Examples.Pets
-      Calco.Examples.Pets.Base
       Calco.Graph
       Calco.GraphGen.Base
       Calco.GraphGen.Fast

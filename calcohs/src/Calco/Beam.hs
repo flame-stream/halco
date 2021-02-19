@@ -78,7 +78,8 @@ reduceNode k reducer = pardo snd . combineValues reducer . groupBy k
 
 coReduceNode :: Ord k => (k1, e -> k) -> (k2, e -> k)
              -> (k -> (k1, [e]) -> (k2, [e]) -> [e]) -> Node2 e
-coReduceNode (k1, k) (k2, k') f es1 es2 =
+coReduceNode (k1, k) (k2, k') reducer es1 es2 =
   let es1' = pardo (\e -> [(k  e, e)]) es1
       es2' = pardo (\e -> [(k' e, e)]) es2
-   in pardo (\(k, (kes1, kes2)) -> f k kes1 kes2) $ coGroupByKey (k1, es1') (k2, es2')
+   in pardo (\(k, (kes1, kes2)) -> reducer k kes1 kes2)
+    $ coGroupByKey (k1, es1') (k2, es2')
