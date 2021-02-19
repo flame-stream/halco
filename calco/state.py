@@ -1,14 +1,13 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
-from .defs import Attr, Prop
 from pyrsistent import PSet
+
+from .defs import Attr, Prop
 
 
 @dataclass
 class State:
-    attrs: PSet[Attr]
-    props: PSet[Prop]
+    attrs: PSet
+    props: PSet
 
     def __init__(self, attrs=None, props=None):
         self.attrs = {} if attrs is None else attrs

@@ -1,4 +1,9 @@
 # from typing import Dict, Tuple, Union, Set, List
+from typing import NewType
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
+
+
 from typing import Tuple, Union
 from pyrsistent import PMap, PVector, PSet
 from pyrsistent import pmap, pvector, pset
@@ -6,30 +11,50 @@ from .defs import NodeName
 from .cgraph import Semantics
 from itertools import product
 
-TermId = int
+TermId = NewType('TermId', int)
 
-SemanticTids = PSet[TermId]
-
-Const = Tuple[NodeName]
-App1 = Tuple[NodeName, TermId]
-App2 = Tuple[NodeName, TermId, TermId]
-Term = Union[Const, App1, App2]
-
-Graph = PMap[TermId, Term]
+SemanticTids = NewType('SemanticTids', PSet)  # PSet[TermId]
 
 
-# todo(frogofjuly): isinstance does not support generic types, so I ended up with this garbage
+class Term(ABC):
+    pass
+    # TODO abstract nn property
+
+
+@dataclass
+class Const(Term):
+    nn: NodeName
+
+
+@dataclass
+class App1(Term):
+    nn: NodeName
+    a1: TermId
+
+
+@dataclass
+class App2(Term):
+    nn: NodeName
+    a1: TermId
+    a2: TermId
+
+
+# Graph = TypeVar('Graph', PMap)  # PMap[TermId, Term]
+
+class Graph:
+    pass  # TODO
+
 
 def isConst(t: Term) -> bool:
-    return len(t) == 1
+    return isinstance(t, Const)
 
 
 def isApp1(t: Term) -> bool:
-    return len(t) == 2
+    return isinstance(t, App1)
 
 
 def isApp2(t: Term) -> bool:
-    return len(t) == 3
+    return isinstance(t, App2)
 
 
 def graph(glist: PVector[Tuple[TermId, Term]]) -> Graph:
@@ -49,7 +74,7 @@ def union(g1: Graph, g2: Graph) -> Graph:
 
 
 def nodeName(t: Term) -> NodeName:
-    return t[0]
+    return t.nn
 
 
 def nodeNames(g: Graph) -> PVector[NodeName]:
@@ -134,7 +159,7 @@ def graph2Dot(g: Graph, name: str) -> str:
             inputId1: TermId = t[1]
             inputId2: TermId = t[2]
             return nameLookup(inputId1) + " -> " + nn + "\n" + \
-                   nameLookup(inputId2) + " -> " + nn
+                nameLookup(inputId2) + " -> " + nn
 
         raise RuntimeError(f"This is some very unexpected shit right here: {t}."
                            f" Expected term, got: '{type(t)}' instead")
