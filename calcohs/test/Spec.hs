@@ -9,13 +9,12 @@ import           Test.Hspec
 
 import           Calco.CGraph
 import           Calco.Check
-import           Calco.Conts
+import           Calco.Conts.Types
 import           Calco.Defs
 import qualified Calco.Examples.Pets      as Pets
 import qualified Calco.Examples.Pets.Base as Base
 import           Calco.Graph
 import           Calco.GraphGen.Fast
-import           Calco.Utils
 
 main :: IO ()
 main = hspec $ do
