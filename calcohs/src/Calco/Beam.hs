@@ -4,16 +4,13 @@ module Calco.Beam where
 
 import           Data.Map                 (Map)
 import qualified Data.Map                 as Map
-import           Data.Tuple.Extra         (uncurry3)
 
-import           Calco.Defs               (Attr)
+import           Calco.EGraph             (EStream, ETfm1, ETfm2)
 import           Calco.Utils.Data.Functor (fmap2, (<$$>))
 import           Calco.Utils.Data.Map     (insertOrApply)
 
-type Stream e = [e]
-
 -- Core Beam transform that maps function on stream.
-pardo :: (e -> [e']) -> Stream e -> Stream e'
+pardo :: (e -> [e']) -> EStream e -> EStream e'
 pardo = concatMap
 
 -- Core Beam transform that groups values with the same keys.
@@ -23,11 +20,11 @@ groupByKey = Map.toList . foldr f Map.empty
     f (k, v) = insertOrApply k [v] (v :)
 
 -- Beam transform that groups stream elements by key.
-groupBy :: Ord k => (e -> k) -> Stream e -> [(k, [e])]
+groupBy :: Ord k => (e -> k) -> EStream e -> [(k, [e])]
 groupBy k = groupByKey . map (\e -> (k e, e))
 
 -- Beam transform that groups by a some number of named properties.
-groupBy' :: (Ord k, Ord k') => Map k (e -> k') -> Stream e -> [(Map k k', [e])]
+groupBy' :: (Ord k, Ord k') => Map k (e -> k') -> EStream e -> [(Map k k', [e])]
 groupBy' ks = groupByKey . map (\e -> (fmap ($ e) ks, e))
 
 -- Core Beam transform that applies relational join to two streams.
@@ -55,29 +52,26 @@ combineValues :: Ord k => ([v] -> v') -> [(k, [v])] -> [(k, v')]
 combineValues = fmap2
 
 -- Core Beam transform.
-flatten :: [Stream e] -> Stream e
+flatten :: [EStream e] -> EStream e
 flatten = concat
 
 -- Core Beam transform.
-partition :: Integral i => i -> Stream e -> [Stream e]
+partition :: Integral i => i -> EStream e -> [EStream e]
 partition n = fmap2 snd . fmap snd
             . groupBy ((`mod` n) . fst)
             . zip [0..]
 
 
--- Type of the computational graph node. It should be endomorphism
--- to be able to permute it with other nodes.
-type Node e = Stream e -> Stream e
-type Node2 e = Stream e -> Stream e -> Stream e
+-- Combinators that make nodes with ability to permute for computational graph.
 
-pardoNode :: (e -> [e]) -> Node e
+pardoNode :: (e -> [e]) -> ETfm1 e
 pardoNode = pardo
 
-reduceNode :: Ord k => (e -> k) -> ([e] -> [e]) -> Node e
+reduceNode :: Ord k => (e -> k) -> ([e] -> [e]) -> ETfm1 e
 reduceNode k reducer = pardo snd . combineValues reducer . groupBy k
 
 coReduceNode :: Ord k => (k1, e -> k) -> (k2, e -> k)
-             -> (k -> (k1, [e]) -> (k2, [e]) -> [e]) -> Node2 e
+             -> (k -> (k1, [e]) -> (k2, [e]) -> [e]) -> ETfm2 e
 coReduceNode (k1, k) (k2, k') reducer es1 es2 =
   let es1' = pardo (\e -> [(k  e, e)]) es1
       es2' = pardo (\e -> [(k' e, e)]) es2

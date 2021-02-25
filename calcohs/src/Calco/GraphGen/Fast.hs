@@ -1,81 +1,82 @@
 {-# LANGUAGE GADTs         #-}
 {-# LANGUAGE TupleSections #-}
 
-module Calco.GraphGen.Fast where
+module Calco.GraphGen.Fast (genGraphs) where
 
-import qualified Control.Monad.State      as StateM
+import           Data.Map                 ((!))
+import qualified Data.Map                 as Map
 import           Data.Set                 (Set)
 import qualified Data.Set                 as Set
-import           Debug.Trace
+import           Data.Tuple.Extra         (fst3)
 
-import           Calco.CGraph             (CGraph, Env (..), tfm1, tfm2, tfms,
-                                           tfms1, tfms2)
-import           Calco.Conts.Types        (ContContext, match, update)
+import           Calco.CGraph             (CGraph, CTfm1 (CTfm1), CTfm2 (CTfm2),
+                                           Env (..))
+import qualified Calco.CGraph             as CGraph
+import           Calco.Conts.Types        (ContContext, InCont (..),
+                                           OutCont (..))
 import           Calco.Defs               (NodeName)
-import           Calco.Graph              (Graph, Term (..), TermId,
-                                           extractPipeline, graph, noSameNodes,
-                                           nodeName, semanticTids)
-import           Calco.GraphGen.Utils     (Source, graphSources)
+import           Calco.Graph              (Graph, Node (..), NodeId, graph)
+import qualified Calco.Graph              as Graph
+import           Calco.GraphGen.Utils     (graphSources)
 import           Calco.State              (State)
 import           Calco.Utils.Data.Functor ((<$$>))
-import           Data.Tuple.Extra         (fst3)
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =
-  let (sources, consts, tidMax) = graphSources e
-      nTfms = length $ tfms e
-      apps = genFromSources nTfms e tidMax ((, Set.empty) <$> sources) Set.empty
-      bigGraph = graph $ consts ++ apps
-      graphs = map (bigGraph `extractPipeline`) $ semanticTids bigGraph s
-   in filter noSameNodes graphs -- Every semantics node also will occur only once.
+  let (sources, streams, nidMax) = graphSources e
+      nTfms = Map.size (CGraph.tfms1 e) + Map.size (CGraph.tfms2 e)
+      tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> sources) Set.empty
+      bigGraph = graph $ streams ++ tfms
+      graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s
+   in filter Graph.noSameNodes graphs -- Every semantics node also will occur only once.
 
 genFromSources :: ContContext a p i o
-               => Int                 -- Graph depth.
+               => Int                    -- Graph depth.
                -> Env i o
-               -> TermId              -- Maximal used term id.
-               -> [( Source a p       -- All available sources to make graph next layer.
-                   , Set NodeName )]  -- Particular transformations that were used
-                                      -- to make up source.
-               -> Set Term            -- Already generated terms of transformations.
-               -> [(TermId, Term)]    -- Terms of the all possible graphs with the given depth.
+               -> NodeId                 -- Maximal used node id.
+               -> [( (NodeId, State a p) -- All available sources to make graph next layer.
+                   , Set NodeName )]     -- Particular transformations that were used
+                                         -- to make up source.
+               -> Set Node               -- Already generated nodes of transformations.
+               -> [(NodeId, Node)]       -- nodes of the all possible graphs with the given depth.
 genFromSources 0 _ _ _ _ = []
-genFromSources d e tid sources terms =
+genFromSources d e nid sources nodes =
   let sources1 = zip
-        [tid + 1..]
-        [(app, s `update` o, nn `Set.insert` nns)
-          | ((tid, s), nns) <- sources
-          , nn <- tfms1 e
+        [nid + 1..]
+        [(tfm, s `update` o, nn `Set.insert` nns)
+          | ((nid, s), nns) <- sources
+          , nn <- Map.keys $ CGraph.tfms1 e
           , nn `Set.notMember` nns
-          , let app = App1 nn tid
-          , app `Set.notMember` terms
-          , let (i, o) = tfm1 e nn
+          , let tfm = Tfm1 nn nid
+          , tfm `Set.notMember` nodes
+          , let CTfm1 i o = CGraph.tfms1 e ! nn
           , s `match` i]
-      tid' = if null sources1
-        then tid
+      nid' = if null sources1
+        then nid
         else fst $ last sources1
 
       sources2 = zip
-        [tid' + 1..]
-        [(app, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
-          | ((tid1, s1), nns1) <- sources
-          , ((tid2, s2), nns2) <- sources
-          , tid1 /= tid2
-          , nn <- tfms2 e
+        [nid' + 1..]
+        [(tfm, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
+          | ((nid1, s1), nns1) <- sources
+          , ((nid2, s2), nns2) <- sources
+          , nid1 /= nid2
+          , nn <- Map.keys $ CGraph.tfms2 e
           , nn `Set.notMember` nns1
           , nn `Set.notMember` nns2
-          , let app = App2 nn tid1 tid2
-          , app `Set.notMember` terms
-          , let (i1, i2, o) = tfm2 e nn
+          , let tfm = Tfm2 nn nid1 nid2
+          , tfm `Set.notMember` nodes
+          , let CTfm2 i1 i2 o = CGraph.tfms2 e ! nn
           , s1 `match` i1
           , s2 `match` i2]
-      tid'' = if null sources2
-        then tid'
+      nid'' = if null sources2
+        then nid'
         else fst $ last sources2
 
-      terms1 = fst3 <$$> sources1
-      terms2 = fst3 <$$> sources2
+      nodes1 = fst3 <$$> sources1
+      nodes2 = fst3 <$$> sources2
       sources' = sources ++ (toSource <$> sources1) ++ (toSource <$> sources2)
-      terms' = terms <> Set.fromList (snd <$> terms1) <> Set.fromList (snd <$> terms2)
-   in terms1 ++ terms2 ++ genFromSources (d - 1) e tid'' sources' terms'
+      nodes' = nodes <> Set.fromList (snd <$> nodes1) <> Set.fromList (snd <$> nodes2)
+   in nodes1 ++ nodes2 ++ genFromSources (d - 1) e nid'' sources' nodes'
   where
-    toSource (tid, (t, s, nns)) = ((tid, s), nns)
+    toSource (nid, (t, s, nns)) = ((nid, s), nns)

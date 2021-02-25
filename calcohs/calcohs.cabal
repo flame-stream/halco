@@ -32,6 +32,7 @@ library
       Calco.Cost
       Calco.Defs
       Calco.DSL
+      Calco.EGraph
       Calco.Examples.Pets
       Calco.Graph
       Calco.GraphGen.Base

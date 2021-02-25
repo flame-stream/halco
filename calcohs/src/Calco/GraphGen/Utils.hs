@@ -1,20 +1,22 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GADTs        #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Calco.GraphGen.Utils where
 
-import           Calco.CGraph             (Env, stream, streams)
-import           Calco.Conts.Types
-import           Calco.Graph              (Term (..), TermId)
-import           Calco.State              (State)
-import           Calco.Utils.Data.Functor ((<$$>))
+import qualified Data.Map          as Map
 
-type Source a p = (TermId, State a p)
+import           Calco.CGraph      (Env (..))
+import qualified Calco.CGraph      as CGraph
+import           Calco.Conts.Types (ContContext, OutCont (..))
+import           Calco.Graph       (Node (..), NodeId)
+import           Calco.State       (State)
 
 graphSources :: ContContext a p i o
-             => Env i o -> ([Source a p], [(TermId, Term)], TermId)
-graphSources e =
-  let enumeratedStreams = zip [1..] $ streams e
-      sources = toState . stream e <$$> enumeratedStreams
-      consts = Const <$$> enumeratedStreams
-      tidMax = fst $ last enumeratedStreams
-   in (sources, consts, tidMax)
+             => Env i o -> ([(NodeId, State a p)], [(NodeId, Node)], NodeId)
+graphSources (CGraph.streams -> m) =
+  let sources = toState . CGraph.streamC . snd <$> Map.toList m
+      streams = Stream . fst <$> Map.toList m
+      nidMax = toInteger $ Map.size m
+   in (enumerate sources, enumerate streams, nidMax)
+  where
+    enumerate = zip [1..]

@@ -15,67 +15,78 @@ import           Calco.Utils.Data.List        (cartesianProduct)
 import           Calco.Utils.Data.Map         (findKeys)
 import           Calco.Utils.Data.Traversable (countOccs)
 
-type TermId = Integer
+type NodeId = Integer
 
--- Set of tids that have terms in the graph that form its semantics.
-type SemanticTids = Set TermId
+-- Set of nids that have terms in the graph that form its semantics.
+type SemanticNids = Set NodeId
 
-data Term =
-    Const NodeName
-  | App1 NodeName TermId
-  | App2 NodeName TermId TermId
-  deriving (Show, Eq, Ord)
+data Node =
+    Stream NodeName
+  | Tfm1 NodeName NodeId
+  | Tfm2 NodeName NodeId NodeId
+  deriving (Eq, Ord, Show)
 
-newtype Graph = Graph (Map TermId Term)
-  deriving (Show)
+newtype Graph = Graph (Map NodeId Node)
 
-graph :: [(TermId, Term)] -> Graph
+instance Semigroup Graph where
+  (<>) = union
+
+instance Monoid Graph where
+  mempty = empty
+
+instance Show Graph where
+  show = flip graph2Dot "graph"
+
+graph :: [(NodeId, Node)] -> Graph
 graph = Graph . Map.fromList
 
-toMap :: Graph -> Map TermId Term
+toMap :: Graph -> Map NodeId Node
 toMap (Graph m) = m
 
-toList :: Graph -> [(TermId, Term)]
+toList :: Graph -> [(NodeId, Node)]
 toList = Map.toList . toMap
 
 empty :: Graph
 empty = graph []
 
 union :: Graph -> Graph -> Graph
-union (Graph m1) (Graph m2) = Graph $ m1 `Map.union` m2
+union (Graph m1) (Graph m2) = Graph $ m1 <> m2
 
-nodeName :: Term -> NodeName
+nodeName :: Node -> NodeName
 nodeName = \case
-  Const nn    -> nn
-  App1 nn _   -> nn
-  App2 nn _ _ -> nn
+  Stream nn   -> nn
+  Tfm1 nn _   -> nn
+  Tfm2 nn _ _ -> nn
 
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
 
-extractPipeline :: Graph -> SemanticTids -> Graph
-extractPipeline g tids = Map.foldrWithKey f empty $ toMap g
+-- Extracts graph that has at least one of each nid of semantics.
+extractPipeline :: Graph -> SemanticNids -> Graph
+extractPipeline g nids = Map.foldrWithKey f empty $ toMap g
   where
-    f :: TermId -> Term -> Graph -> Graph
-    f tid _ g'@(Graph m')
-      | tid `Map.member` m' = g'
-      | tid `Set.notMember` tids = g'
-      | otherwise = g' `union` extractPipeline' g tid
+    f :: NodeId -> Node -> Graph -> Graph
+    f nid _ g'@(Graph m')
+      | nid `Map.member` m' = g'
+      | nid `Set.notMember` nids = g'
+      | otherwise = extractPipeline' g nid g'
 
-extractPipeline' :: Graph -> TermId -> Graph
-extractPipeline' g@(Graph m) tid = m ! tid & Graph . \case
-  c@(Const _) -> Map.singleton tid c
-  a@(App1 _ tid') -> Map.insert tid a . toMap $ extractPipeline' g tid'
-  a@(App2 _ tid1 tid2) ->
-    let m1 = toMap $ extractPipeline' g tid1
-        m2 = toMap $ extractPipeline' g tid2
-     in Map.insert tid a $ m1 `Map.union` m2
+    extractPipeline' :: Graph -> NodeId -> Graph -> Graph
+    extractPipeline' g@(Graph m) nid g'@(Graph m')
+      | nid `Map.member` m' = g'
+      | otherwise = m ! nid & Graph . \case
+        s@(Stream _) -> Map.insert nid s m'
+        t@(Tfm1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
+        t@(Tfm2 _ nid1 nid2) ->
+          let m1 = toMap $ extractPipeline' g nid1 g'
+              m2 = toMap $ extractPipeline' g nid2 g'
+          in Map.insert nid t $ m1 <> m2
 
-findIds :: Graph -> NodeName -> [TermId]
+findIds :: Graph -> NodeName -> [NodeId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m
 
-semanticTids :: Graph -> Semantics -> [SemanticTids]
-semanticTids g = (Set.fromList <$>)
+semanticNids :: Graph -> Semantics -> [SemanticNids]
+semanticNids g = (Set.fromList <$>)
                 . cartesianProduct . (findIds g <$>)
                 . Set.toList
 
@@ -85,19 +96,20 @@ noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
 graph2Dot :: Graph -> String -> String
 graph2Dot g name =
   let prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {\n"
-      delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") -- split by \n only if appending non-empty string (x)
+      -- split by \n only if appending non-empty string (x)
+      delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "")
       vtxes = foldr (delim . (\x -> "\"" ++ x ++ "\"")) "" (nodeNames g)
       strGraph = foldr (delim . edge2dot) "" (toList g)
       suffix = "\n}\n"
    in prefix ++ vtxes ++ strGraph ++ suffix
   where
-    edge2dot :: (TermId, Term) -> String
-    edge2dot (id, Const nn) = ""
-    edge2dot (id, App1 nn inputId) = nameLookup inputId  ++ " -> " ++ "\"" ++ nn ++ "\""
-    edge2dot (id, App2 nn inputId1 inputId2) =
-      let edge1 = nameLookup inputId1 ++ " -> " ++ "\"" ++ nn ++ "\""
-          edge2 = nameLookup inputId2 ++ " -> " ++ "\"" ++ nn ++ "\""
+    edge2dot :: (NodeId, Node) -> String
+    edge2dot (id, Stream nn) = ""
+    edge2dot (id, Tfm1 nn nid) = nameLookup nid  ++ " -> " ++ "\"" ++ nn ++ "\""
+    edge2dot (id, Tfm2 nn nid1 nid2) =
+      let edge1 = nameLookup nid1 ++ " -> " ++ "\"" ++ nn ++ "\""
+          edge2 = nameLookup nid2 ++ " -> " ++ "\"" ++ nn ++ "\""
        in edge1 ++ "\n" ++ edge2
 
-    nameLookup :: TermId -> String
-    nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Const "undefined id") id (toMap g)) ++ "\""
+    nameLookup :: NodeId -> String
+    nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Stream "undefined id") id (toMap g)) ++ "\""

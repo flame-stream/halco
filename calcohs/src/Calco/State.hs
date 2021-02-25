@@ -15,8 +15,8 @@ type StateContext a p = (Attr a, Prop p)
 data State a p where
   State :: StateContext a p
         => { attrs :: Set a
-           , props :: Set p
-           }                -> State a p
+           , props :: Set p }
+        -> State a p
 
 deriving instance Show (State a p)
 
