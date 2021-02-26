@@ -2,13 +2,15 @@
 
 module Calco.Examples.Pets where
 
-import           Data.Map         (Map)
+import           Data.Map         (Map, (!))
 import qualified Data.Map         as Map
 import qualified Data.Set         as Set
 
+import           Calco.Beam       (coReduceNode', pardoNodeP, reduceNode)
 import           Calco.CGraph     (CGraph, Semantics, env, semantics)
 import           Calco.Conts.Base (InCont, OutCont, inCont, outCont, outContN)
 import           Calco.DSL
+import           Calco.EGraph
 import           Calco.Graph      (Graph, Node (..), graph)
 
 petsSemantics :: Semantics
@@ -82,3 +84,65 @@ graph1 = graph
   , 11 ->> Tfm2 "joinPersonsFriends" 2 10
   , 12 ->> Tfm2 "joinPetsSpecies" 11 4
   ]
+
+type E = Map String String
+
+env' :: Env' E
+env' = Env'
+  { streams = m
+    [ "pets" ->> pets
+    , "persons" ->> persons
+    , "friends" ->> friends
+    , "species" ->> species
+    ]
+  , tfms1 = m
+    [ "petNamesStats" ->> id
+    , "priceNames" ->> id
+    , "nameSpeciesCorrelation" ->> id
+    , "filterMesozoic" ->> pardoNodeP ((< (100500 :: Integer)) . read . (! "pet.age"))
+    , "filterSameAge" ->> pardoNodeP (\e -> e ! "person.age" == e ! "pet.age")
+    ]
+  , tfms2 = m
+    [ "joinPetsFriends" ->> coReduceNode' (! "pet.id") (! "friend.petId")
+    , "joinPersonsFriends" ->> coReduceNode' (! "person.id") (! "friend.personId")
+    , "joinPetsSpecies" ->> coReduceNode' (! "pet.speciesId") (! "species.id")
+    ]
+  }
+
+pets :: EStream E
+pets =
+  [ pet ["1", "a", "12", "3"]
+  , pet ["2", "b", "1", "1"]
+  , pet ["3", "bobik", "10005000", "2"]
+  , pet ["4", "d", "10", "1"]
+  ]
+  where
+    pet = m . zip ["pet.id", "pet.name", "pet.age", "pet.speciesId"]
+
+persons :: EStream E
+persons =
+  [ person ["1", "Bob", "5"]
+  , person ["2", "Sarah", "1"]
+  , person ["3", "Lee Jae Dong", "30"]
+  , person ["4", "Stork", "10005000"]
+  , person ["5", "Byun", "28"]
+  ]
+  where
+    person = m . zip ["person.id", "person.name", "person.age"]
+
+friends :: EStream E
+friends =
+  [ friend ["1", "2"]
+  , friend ["4", "3"]
+  ]
+  where
+    friend = m . zip ["friend.personId", "friend.petId"]
+
+species :: EStream E
+species =
+  [ specie ["3", "dog"]
+  , specie ["1", "cat"]
+  , specie ["2", "Tyrannosaurus"]
+  ]
+  where
+    specie = m . zip ["species.id", "species.name"]

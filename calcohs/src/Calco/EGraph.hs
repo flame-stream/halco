@@ -18,11 +18,10 @@ data Env' e = Env'
   , tfms2   :: Map NodeName (ETfm2 e)
   }
 
-type Sources e = Map NodeName (EStream e)
 type Result e = Map NodeName (EStream e)
 
-eval :: Graph -> Env' e -> Sources e -> Result e
-eval g@(Graph m) e sources = Map.foldrWithKey f Map.empty m
+eval :: Graph -> Env' e -> Result e
+eval g@(Graph m) e = Map.foldrWithKey f Map.empty m
   where
     -- f :: NodeId -> Node -> Result e -> Result e
     f nid n r | Graph.nodeName n `Map.member` r = r
@@ -32,7 +31,7 @@ eval g@(Graph m) e sources = Map.foldrWithKey f Map.empty m
     eval' g@(Graph m) e nid r
       | nodeName nid `Map.member` r = r
       | otherwise = case m ! nid of
-        Stream nn -> Map.insert nn (sources ! nn) r
+        Stream nn -> Map.insert nn (streams e ! nn) r
         Tfm1 nn nid' ->
           let m' = eval' g e nid' r
               s' = m' ! nodeName nid'

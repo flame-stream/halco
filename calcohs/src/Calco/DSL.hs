@@ -1,12 +1,15 @@
 module Calco.DSL where
 
+import           Data.Map          (Map)
+import qualified Data.Map          as Map
+
 import           Calco.CGraph      (CStream (CStream), CTfm1 (CTfm1),
                                     CTfm2 (CTfm2))
 import           Calco.Conts.Types (InCont, OutCont)
 import           Calco.Defs        (NodeName)
 import           Calco.Graph       (Node, NodeId)
 
-(->>) :: NodeId -> Node -> (NodeId, Node)
+(->>) :: a -> b -> (a, b)
 (->>) = (,)
 
 infix 1 `ap0`
@@ -28,3 +31,6 @@ infix 3 <&>
 infix 2 -->
 (-->) :: OutCont o => a -> o -> (a, o)
 (-->) = (,)
+
+m :: Ord k => [(k, v)] -> Map k v
+m = Map.fromList

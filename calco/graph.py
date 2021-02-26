@@ -39,8 +39,6 @@ class App2(Term):
     a2: TermId
 
 
-# Graph = TypeVar('Graph', PMap)  # PMap[TermId, Term]
-
 class Graph:
     pass  # TODO
 
