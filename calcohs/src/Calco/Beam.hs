@@ -34,14 +34,10 @@ coGroupByKey :: Ord k => (k1, [(k, v1)]) -> (k2, [(k, v2)])
              -> [(k, ( (k1, [v1])
                      , (k2, [v2]) ))]
 coGroupByKey (k1, vs1) (k2, vs2) =
-  map from $ groupBy fst
-    [(k, (v1, v2))
-      | (k , v1) <- vs1
-      , (k', v2) <- vs2
-      , k == k']
-  where
-    from (k, es) = (k, ( (k1, fst . snd <$> es)
-                       , (k2, snd . snd <$> es) ))
+  [(k, (,) (k1, vs1') (k2, vs2'))
+    | (k , vs1') <- groupByKey vs1
+    , (k', vs2') <- groupByKey vs2
+    , k == k']
 
 -- Beam transform that aggregetes values with the same key.
 combinePerKey :: Ord k => ([v] -> v') -> [(k, v)] -> [(k, v')]
