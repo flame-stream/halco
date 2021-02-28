@@ -1,4 +1,4 @@
-from typing import NewType, List, Union, Iterator, Optional
+from typing import NewType, List, Union, Iterator, Optional, Dict, Any, Set
 from dataclasses import dataclass
 from pyrsistent import PSet
 
@@ -7,6 +7,7 @@ from .state import State
 
 Attr = NewType('Attr', str)
 Prop = NewType('Prop', str)
+Elem = NewType('Elem', Dict[Attr, Any])
 
 
 class Attrs:
@@ -23,6 +24,9 @@ class Attrs:
 class PropGroup:
     def __init__(self):
         self.props = set()
+
+    def __iter__(self) -> Iterator[Prop]:
+        return iter(self.props)
 
     def add(self, prop: Prop) -> None:
         self.props.add(prop)
@@ -42,22 +46,34 @@ def prop(prop: Prop, groups: Union[PropGroup, List[PropGroup]]) -> Prop:
     return prop
 
 
-@dataclass
+SetAttrs = NewType('SetAttrs', Union[Attrs, Set[Attrs]])
+SetProps = NewType('SetProps', Union[PropGroup, Set[Prop]])
+
+
+@dataclass  # TODO
 class InCont:
     attrs: PSet  # Needed attributes
     props: PSet  # Needed properties of the data
     noprops: PSet  # Prohibited properties
 
-    def __init__(self, attrs=None, props=None, noprops=None):
-        pass  # TODO
+    def __init__(
+        self,
+        attrs: Optional[SetAttrs] = None,
+        props: Optional[SetProps] = None,
+        noprops: Optional[SetProps] = None
+    ):
+        # TODO
+        raise NotImplementedError
 
     def match(self, s: State) -> bool:
-        return (self.attrs.issubset(s.attrs) and
-                self.props.issubset(s.props) and
-                self.noprops.isdisjoint(s.props))
+        # TODO
+        # return (self.attrs.issubset(s.attrs) and
+        #         self.props.issubset(s.props) and
+        #         self.noprops.isdisjoint(s.props))
+        raise NotImplementedError
 
 
-@dataclass
+@dataclass  # TODO
 class OutCont:
     attrs: PSet  # Attributes that will be added
     rem: bool  # Will old attributes be removed
@@ -66,15 +82,18 @@ class OutCont:
 
     def __init__(
         self,
-        attrs: Optional[Union[Attrs, Set[Attr]]] = None,
-        rem=False,
-        props=None,
-        remprops=None
+        attrs: Optional[SetAttrs] = None,
+        rem: bool = False,
+        props: Optional[SetProps] = None,
+        remprops: Optional[SetProps] = None
     ):
-        pass  # TODO
+        # TODO
+        raise NotImplementedError
 
     def update(self, s: State) -> State:
-        return State(
-            attrs=self.attrs if self.rem else self.attrs | s.attrs,
-            props=self.props | (s.props - self.remprops)
-        )
+        # TODO
+        raise NotImplementedError
+        # return State(
+        #     attrs=self.attrs if self.rem else self.attrs | s.attrs,
+        #     props=self.props | (s.props - self.remprops)
+        # )
