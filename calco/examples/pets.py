@@ -10,10 +10,10 @@ person = Attrs('person', ['id', 'name', 'age'])
 friend = Attrs('friend', ['personId', 'petId'])
 specie = Attrs('specie', ['id', 'name'])
 
-filterPetProps = PropGroup()
+filter_pet_props = PropGroup()
 
-sameAge = prop('sameAge', filterPetProps)
-noFromMesozoic = prop('noFromMesozoic', filterPetProps)
+same_age = prop('same_age', filter_pet_props)
+no_from_mesozoic = prop('no_from_mesozoic', filter_pet_props)
 
 
 @stream(OutCont(attrs=pet))
@@ -65,7 +65,7 @@ def species(pipeline: beam.Pipeline) -> beam.PCollection:
 @tfm1(
     InCont(
         attrs={pet.name},
-        noprops=filterPetProps
+        noprops=filter_pet_props
     ),
     OutCont()
 )
@@ -78,7 +78,7 @@ def pet_names_stats(pcoll: beam.PCollection) -> beam.PCollection:
 @tfm1(
     InCont(
         attrs={person.name, pet.name},
-        props={sameAge, noFromMesozoic}
+        props={same_age, no_from_mesozoic}
     ),
     OutCont()
 )
@@ -90,7 +90,7 @@ def price_names(pcoll: beam.PCollection) -> beam.PCollection:
 @tfm1(
     InCont(
         attrs={person.name, specie.name},
-        props={noFromMesozoic}
+        props={no_from_mesozoic}
     ),
     OutCont()
 )
@@ -101,7 +101,7 @@ def name_species_correlation(pcoll: beam.PCollection) -> beam.PCollection:
 
 @tfm1(
     InCont(attrs={pet.age}),
-    OutCont(props={noFromMesozoic})
+    OutCont(props={no_from_mesozoic})
 )
 def filter_mesozoic(pcoll: beam.PCollection) -> beam.PCollection:
     return pcoll | beam.Filter(lambda e: e[pet.age] < 100500)
@@ -109,7 +109,7 @@ def filter_mesozoic(pcoll: beam.PCollection) -> beam.PCollection:
 
 @tfm1(
     InCont(attrs={"pet.age", "person.age"}),
-    OutCont(props={sameAge})
+    OutCont(props={same_age})
 )
 def filter_same_age(pcoll: beam.PCollection) -> beam.PCollection:
     return pcoll | beam.Filter(lambda e: e[pet.age] == e[person.age])
