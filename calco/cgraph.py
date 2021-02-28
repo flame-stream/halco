@@ -1,7 +1,4 @@
 from typing import List, Any, Callable
-# from pyrsistent import PMap, PSet, PVector
-# from pyrsistent import pmap, pset, pvector
-# from .defs import NodeName
 
 from .conts import OutCont, InCont
 from .graph import Graph
@@ -13,7 +10,8 @@ OUT_CONT_ATTR = '__out_cont__'
 
 
 class CGraph:
-    def __main__(self, globals: Dict[str, Any], semantics: List[Node]):
+    def __init__(self, globals: Dict[str, Any], semantics: List[Node]):
+        # TODO Не только dir, но и импорты надо инспектить
         self.streams = {name: node for name, node in globals.items() if is_stream(node)}
         self.tfms1 = {name: node for name, node in globals.items() if is_tfm1(node)}
         self.tfms2 = {name: node for name, node in globals.items() if is_tfm2(node)}
@@ -59,15 +57,14 @@ def is_tfm2(n: Node) -> bool:
     return node_type(n) == NodeType.TFM2
 
 
-def node_type(n: Node) -> NodeType
-   if hasattr(n, IN2_CONT_ATTR):
+def node_type(n: Node) -> NodeType:
+    if hasattr(n, IN2_CONT_ATTR):
         return NodeType.TFM2
 
     if hasattr(n, IN1_CONT_ATTR):
         return NodeType.TFM1
 
     return NodeType.STREAM
-
 
 
 # # todo(frogofjuly): isinstance does not support generic types, so I ended up with this garbage

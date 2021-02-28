@@ -41,7 +41,7 @@ def persons(pipeline: beam.Pipeline) -> beam.PCollection:
     )
 
 
-@stream(OutCont(attrs={friend.personId, friend.petId}))
+@stream(OutCont(attrs=friend))
 def friends(pipeline: beam.Pipeline) -> beam.PCollection:
     return pipeline | beam.Create(
         dict(zip(friend, e)) for e in [
@@ -51,7 +51,7 @@ def friends(pipeline: beam.Pipeline) -> beam.PCollection:
     )
 
 
-@stream(OutCont(attrs={specie.id, specie.name}))
+@stream(OutCont(attrs=specie))
 def species(pipeline: beam.Pipeline) -> beam.PCollection:
     return pipeline | beam.Create(
         dict(zip(specie, e)) for e in [
@@ -69,10 +69,10 @@ def species(pipeline: beam.Pipeline) -> beam.PCollection:
     ),
     OutCont()
 )
-def petNamesStats(p) -> beam.PCollection:
+def pet_names_stats(pcoll: beam.PCollection) -> beam.PCollection:
     # TODO side effects
     # TODO calcs
-    return p
+    return pcoll
 
 
 @tfm1(
@@ -82,9 +82,9 @@ def petNamesStats(p) -> beam.PCollection:
     ),
     OutCont()
 )
-def priceNames(p) -> beam.PCollection:
+def price_names(pcoll: beam.PCollection) -> beam.PCollection:
     # TODO side
-    return p
+    return pcoll
 
 
 @tfm1(
@@ -94,25 +94,25 @@ def priceNames(p) -> beam.PCollection:
     ),
     OutCont()
 )
-def nameSpeciesCorrelation(p) -> beam.PCollection:
+def name_species_correlation(pcoll: beam.PCollection) -> beam.PCollection:
     # TODO side
-    return p
+    return pcoll
 
 
 @tfm1(
     InCont(attrs={pet.age}),
     OutCont(props={noFromMesozoic})
 )
-def filterMesozoic(p) -> beam.PCollection:
-    return p | beam.Filter(lambda e: e[pet.age] < 100500)
+def filter_mesozoic(pcoll: beam.PCollection) -> beam.PCollection:
+    return pcoll | beam.Filter(lambda e: e[pet.age] < 100500)
 
 
 @tfm1(
     InCont(attrs={"pet.age", "person.age"}),
     OutCont(props={sameAge})
 )
-def filterSameAge(p) -> beam.PCollection:
-    return p | beam.Filter(lambda e: e[pet.age] == e[person.age])
+def filter_same_age(pcoll: beam.PCollection) -> beam.PCollection:
+    return pcoll | beam.Filter(lambda e: e[pet.age] == e[person.age])
 
 
 @tfm2(
@@ -120,10 +120,13 @@ def filterSameAge(p) -> beam.PCollection:
     InCont(props={friend.petId}),
     OutCont()
 )
-def joinPetsFriends(p1, p2) -> beam.PCollection:
+def join_pets_friends(
+    pcoll1: beam.PCollection,
+    pcoll2: beam.PCollection
+) -> beam.PCollection:
     return combs.inner_join_node(
         itemgetter(pet.id), itemgetter(friend.petId)
-    )(p1, p2)
+    )(pcoll1, pcoll2)
 
 
 @tfm2(
@@ -131,10 +134,13 @@ def joinPetsFriends(p1, p2) -> beam.PCollection:
     InCont(props={friend.personId}),
     OutCont()
 )
-def joinPersonsFriends(p1, p2) -> beam.PCollection:
+def join_persons_friends(
+    pcoll1: beam.PCollection,
+    pcoll2: beam.PCollection
+) -> beam.PCollection:
     return combs.inner_join_node(
         itemgetter(person.id), itemgetter(friend.personId)
-    )(p1, p2)
+    )(pcoll1, pcoll2)
 
 
 @tfm2(
@@ -142,20 +148,22 @@ def joinPersonsFriends(p1, p2) -> beam.PCollection:
     InCont(props={specie.id}),
     OutCont()
 )
-def joinPetsSpecies(p1, p2) -> beam.PCollection:
-    return combs.inneinner_join_noder_joinNode(
+def join_pets_species(
+    pcoll1: beam.PCollection,
+    pcoll2: beam.PCollection
+) -> beam.PCollection:
+    return combs.inner_join_node(
         itemgetter(pet.speciesId), itemgetter(specie.id)
-    )(p1, p2)
+    )(pcoll1, pcoll2)
 
 
 if __name__ == '__main__':
-    # Не только dir, но и импорты надо инспектить
     cgraph = CGraph(
         globals=globals(),
-        semantics=[petNamesStats, priceNames, nameSpeciesCorrelation],
+        semantics=[pet_names_stats, price_names, name_species_correlation],
     )
     graphs = cgraph.gen_graphs()
-    # drawGraphs(take(graphs, 10))
+    # TODO drawGraphs(take(graphs, 10))
     i = int(input())
     pipeline_options = None  # TODO
     with beam.Pipeline(options=pipeline_options) as pipeline:
