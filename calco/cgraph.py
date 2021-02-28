@@ -1,48 +1,73 @@
-# from typing import Tuple, Union, Callable, NewType, Set, Dictm, List, Any
+from typing import List, Any, Callable
 # from pyrsistent import PMap, PSet, PVector
 # from pyrsistent import pmap, pset, pvector
 # from .defs import NodeName
+
 from .conts import OutCont, InCont
+from .graph import Graph
+from .defs import Node, Stream, Tfm1, Tfm2, NodeType
 
-
-_IS_STREAM = '__is_stream__'
-_IS_TFM1 = '__is_tfm1__'
-_IS_TFM2 = '__is_tfm2__'
+IN1_CONT_ATTR = '__in1_cont__'
+IN2_CONT_ATTR = '__in2_cont__'
+OUT_CONT_ATTR = '__out_cont__'
 
 
 class CGraph:
-    def __main__(self, globals: Dict[str, Any], semantics: List[ENode]):
-        self.streams = {name: node for name, node in globals.items() if hasattr(node, _IS_STREAM)}
-        self.tfms1 = {name: node for name, node in globals.items() if hasattr(node, _IS_TFM1)}
-        self.tfms2 = {name: node for name, node in globals.items() if hasattr(node, _IS_TFM2)}
+    def __main__(self, globals: Dict[str, Any], semantics: List[Node]):
+        self.streams = {name: node for name, node in globals.items() if is_stream(node)}
+        self.tfms1 = {name: node for name, node in globals.items() if is_tfm1(node)}
+        self.tfms2 = {name: node for name, node in globals.items() if is_tfm2(node)}
         self.semantics = {n.__name__ for n in semantics}
 
     def gen_graphs(self) -> List[Graph]:
         raise NotImplementedError  # TODO
 
 
-def stream(o: OutCont):
-    raise NotImplementedError  # TODO
+def stream(o: OutCont) -> Callable[[Stream], [Stream]]:
+    def decorator(f: Stream) -> Stream:
+        setattr(f, OUT_CONT_ATTR, o)
+        return f
+    return decorator
 
 
-def tfm1(i: InCont, o: OutCont):
-    raise NotImplementedError  # TODO
+def tfm1(i: InCont, o: OutCont) -> Callable[[Tfm1], [Tfm1]]:
+    def decorator(f: Tfm1) -> Tfm1:
+        setattr(f, IN1_CONT_ATTR, i)
+        setattr(f, OUT_CONT_ATTR, o)
+        return f
+    return decorator
 
 
-def tfm2(i1: InCont, i2: InCont, o: OutCont):
-    raise NotImplementedError  # TODO
+def tfm2(i1: InCont, i2: InCont, o: OutCont) -> Callable[[Tfm2], [Tfm2]]:
+    def decorator(f: Tfm2) -> Tfm2:
+        setattr(f, IN1_CONT_ATTR, i1)
+        setattr(f, IN2_CONT_ATTR, i2)
+        setattr(f, OUT_CONT_ATTR, o)
+        return f
+    return decorator
 
 
-# Stream = Tuple[OutCont]
-# Tfm1 = Tuple[InCont, OutCont]
-# Tfm2 = Tuple[InCont, InCont, OutCont]
-# Node = Union[Stream, Tfm1, Tfm2]
+def is_stream(n: Node) -> bool:
+    return node_type(n) == NodeType.STREAM
 
-# Env = PMap[NodeName, Node]
 
-# Semantics = PSet[NodeName]
+def is_tfm1(n: Node) -> bool:
+    return node_type(n) == NodeType.TFM1
 
-# CGraph = Tuple[Env, Semantics]
+
+def is_tfm2(n: Node) -> bool:
+    return node_type(n) == NodeType.TFM2
+
+
+def node_type(n: Node) -> NodeType
+   if hasattr(n, IN2_CONT_ATTR):
+        return NodeType.TFM2
+
+    if hasattr(n, IN1_CONT_ATTR):
+        return NodeType.TFM1
+
+    return NodeType.STREAM
+
 
 
 # # todo(frogofjuly): isinstance does not support generic types, so I ended up with this garbage
