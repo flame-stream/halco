@@ -1,17 +1,21 @@
-from dataclasses import dataclass
-from pyrsistent import PSet
+from typing import Iterable, Optional
+from pyrsistent import PSet, PClass, pset_field, s
 
 from .defs import Attr, Prop
 
 
-@dataclass
-class State:
-    attrs: PSet
-    props: PSet
+# TODO maybe chage to dataclass.
+class State(PClass):
+    attrs = pset_field(Attr)
+    props = pset_field(Prop)
 
-    def __init__(self, attrs=None, props=None):
-        self.attrs = {} if attrs is None else attrs
-        self.props = {} if props is None else props
+    def __init__(
+        self,
+        attrs: Optional[Iterable[Attr]] = None,
+        props: Optional[Iterable[Prop]] = None,
+    ):
+        self.attrs = s() if attrs is None else PSet(attrs)
+        self.props = s() if props is None else PSet(props)
 
-    def union(self, s: State):
-        return State(self.attrs.union(s.attrs), self.props.union(s.props))
+    def __or__(self, s: State):
+        return State(self.attrs | s.attrs, self.props | s.props)

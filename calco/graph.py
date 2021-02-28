@@ -1,26 +1,18 @@
-# from typing import Dict, Tuple, Union, Set, List
-# from typing import NewType
-# from dataclasses import dataclass
-# from abc import ABC, abstractmethod
+import apache_beam as beam
 
-
-# from typing import Tuple, Union
-# from pyrsistent import PMap, PVector, PSet
-# from pyrsistent import pmap, pvector, pset
-# from .defs import NodeName
-# from .cgraph import Semantics
-# from itertools import product
+from .cgraph import CGraph
 
 
 class Graph:
-    def __init__(self, dict):
-        self.graph = dict
-
-    def check(self, env) -> bool:
+    def __init__(self, d):
         # TODO
         raise NotImplementedError
 
-    def eval(self, pipeline) -> None:
+    def check(self, cgraph: CGraph) -> bool:
+        # TODO
+        raise NotImplementedError
+
+    def eval(self, pipeline: beam.Pipeline) -> None:
         # TODO
         raise NotImplementedError
 

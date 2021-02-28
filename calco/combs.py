@@ -1,15 +1,12 @@
-from typing import Callable, Iterable, Dict, Tuple, TypeVar, List, NewType
+from typing import Callable, Iterable, Dict, Tuple, TypeVar, List
 import apache_beam as beam
 
+from .defs import Tfm1, Tfm2
 
-_StreamName = NewType('_StreamName', str)
 
+_StreamName = TypeVar('_StreamName')
 _E = TypeVar('_E')
 _K = TypeVar('_K')
-
-
-Tfm1 = NewType('Tfm1', Callable[[beam.PCollection], beam.PCollection])
-Tfm2 = NewType('Tfm2', Callable[[beam.PCollection, beam.PCollection], beam.PCollection])
 
 
 def reduce_node(

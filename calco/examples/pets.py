@@ -2,7 +2,8 @@ from operator import itemgetter
 import apache_beam as beam
 
 from ..conts import Attrs, PropGroup, prop, OutCont, InCont
-from ..cgraph import stream, tfm1, tfm2
+from ..cgraph import stream, tfm1, tfm2, CGraph
+from .. import combs
 
 pet = Attrs('pet', ['id', 'name', 'age', 'speciesId'])
 person = Attrs('person', ['id', 'name', 'age'])
@@ -120,7 +121,7 @@ def filterSameAge(p) -> beam.PCollection:
     OutCont()
 )
 def joinPetsFriends(p1, p2) -> beam.PCollection:
-    return combinators.coReduceJoin(
+    return combs.inner_join_node(
         itemgetter(pet.id), itemgetter(friend.petId)
     )(p1, p2)
 
@@ -131,7 +132,7 @@ def joinPetsFriends(p1, p2) -> beam.PCollection:
     OutCont()
 )
 def joinPersonsFriends(p1, p2) -> beam.PCollection:
-    return combinators.coReduceJoin(
+    return combs.inner_join_node(
         itemgetter(person.id), itemgetter(friend.personId)
     )(p1, p2)
 
@@ -142,7 +143,7 @@ def joinPersonsFriends(p1, p2) -> beam.PCollection:
     OutCont()
 )
 def joinPetsSpecies(p1, p2) -> beam.PCollection:
-    return combinators.coReduceJoin(
+    return combs.inneinner_join_noder_joinNode(
         itemgetter(pet.speciesId), itemgetter(specie.id)
     )(p1, p2)
 
@@ -154,7 +155,7 @@ if __name__ == '__main__':
         semantics=[petNamesStats, priceNames, nameSpeciesCorrelation],
     )
     graphs = cgraph.gen_graphs()
-    drawGraphs(take(graphs, 10))
+    # drawGraphs(take(graphs, 10))
     i = int(input())
     pipeline_options = None  # TODO
     with beam.Pipeline(options=pipeline_options) as pipeline:

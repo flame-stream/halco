@@ -3,11 +3,7 @@ from dataclasses import dataclass
 from pyrsistent import PSet
 
 from .state import State
-
-
-Attr = NewType('Attr', str)
-Prop = NewType('Prop', str)
-Elem = NewType('Elem', Dict[Attr, Any])
+from .defs import Attr, Prop
 
 
 class Attrs:
