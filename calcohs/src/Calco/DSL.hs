@@ -2,12 +2,30 @@ module Calco.DSL where
 
 import           Data.Map          (Map)
 import qualified Data.Map          as Map
+import           Data.Set          (Set)
+import qualified Data.Set          as Set
 
 import           Calco.CGraph      (CStream (CStream), CTfm1 (CTfm1),
                                     CTfm2 (CTfm2))
+import           Calco.Conts.Impl  (Attr (..), OutAttrs (NewAttrs), Prop (..))
 import           Calco.Conts.Types (InCont, OutCont)
 import           Calco.Defs        (NodeName)
 import           Calco.Graph       (Node, NodeId)
+
+attr :: NodeName -> Set Attr
+attr = Set.singleton . Attr
+
+attrs :: [NodeName] -> Set Attr
+attrs =  Set.fromList . map Attr
+
+attrs' :: NodeName -> [NodeName] -> Set Attr
+attrs' prefix = Set.fromList . map (Attr . (prefix ++) . ('.' :))
+
+prop :: NodeName -> Set Prop
+prop = Set.singleton . Prop
+
+props :: [NodeName] -> Set Prop
+props = Set.fromList . map Prop
 
 (->>) :: a -> b -> (a, b)
 (->>) = (,)
@@ -31,6 +49,12 @@ infix 3 <&>
 infix 2 -->
 (-->) :: OutCont o => a -> o -> (a, o)
 (-->) = (,)
+
+delAttrs :: OutAttrs
+delAttrs = NewAttrs Set.empty
+
+s :: Ord k => [k] -> Set k
+s = Set.fromList
 
 m :: Ord k => [(k, v)] -> Map k v
 m = Map.fromList

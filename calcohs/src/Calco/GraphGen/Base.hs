@@ -1,12 +1,14 @@
-{-# LANGUAGE GADTs      #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 
 module Calco.GraphGen.Base where
 
+import           Control.Applicative       ((<|>))
 import           Control.Monad             (guard)
 import qualified Control.Monad.State       as StateM
 import           Control.Monad.Trans.Class (MonadTrans, lift)
 import           Data.Function             ((&))
+import Data.Functor ((<&>))
 import           Data.Map                  (Map, (!), (!?))
 import qualified Data.Map                  as Map
 import           Data.Maybe                (fromJust)

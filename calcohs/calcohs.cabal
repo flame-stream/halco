@@ -27,13 +27,14 @@ library
       Calco.Beam
       Calco.CGraph
       Calco.Check
-      Calco.Conts.Base
+      Calco.Conts.Impl
       Calco.Conts.Types
       Calco.Cost
       Calco.Defs
       Calco.DSL
-      Calco.EGraph
+      Calco.Eval
       Calco.Examples.Pets
+      Calco.Examples.SplashTime
       Calco.Graph
       Calco.GraphGen.Base
       Calco.GraphGen.Fast

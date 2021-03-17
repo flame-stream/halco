@@ -5,7 +5,7 @@ module Main where
 import           Control.Monad       (forM_)
 import           Data.Map            ((!))
 
-import           Calco.EGraph
+import           Calco.Eval
 import           Calco.Examples.Pets
 import           Calco.Graph         (graph2Dot)
 import           Calco.GraphGen.Fast

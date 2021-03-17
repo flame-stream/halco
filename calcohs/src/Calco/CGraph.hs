@@ -33,18 +33,6 @@ type Semantics = Set NodeName
 
 type CGraph i o = (Env i o, Semantics)
 
-env :: (InCont i, OutCont o)
-    => [(NodeName, CStream o)]
-    -> [(NodeName, CTfm1 i o)]
-    -> [(NodeName, CTfm2 i o)]
-    -> Env i o
-env ss ts1 ts2 = Env { streams = Map.fromList ss
-                     , tfms1   = Map.fromList ts1
-                     , tfms2   = Map.fromList ts2 }
-
-semantics :: [NodeName] -> Semantics
-semantics = Set.fromList
-
 streamC :: CStream o -> o
 streamC (CStream o) = o
 

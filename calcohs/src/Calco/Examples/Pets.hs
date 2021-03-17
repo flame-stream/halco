@@ -2,19 +2,22 @@
 
 module Calco.Examples.Pets where
 
-import           Data.Map         (Map, (!))
-import qualified Data.Map         as Map
-import qualified Data.Set         as Set
+import           Data.Map          (Map, (!))
+import qualified Data.Map          as Map
+import qualified Data.Set          as Set
 
-import           Calco.Beam       (coReduceNode', pardoNodeP, reduceNode)
-import           Calco.CGraph     (CGraph, Semantics, env, semantics)
-import           Calco.Conts.Base (InCont, OutCont, inCont, outCont, outContN)
+import           Calco.Beam        (coReduceNode', pardoNodeP, reduceNode)
+import           Calco.CGraph      (CGraph, Env (Env), Semantics)
+import qualified Calco.CGraph      as CGraph
+import           Calco.Conts.Impl
+import qualified Calco.Conts.Impl  as Impl
+import           Calco.Conts.Types
 import           Calco.DSL
-import           Calco.EGraph
-import           Calco.Graph      (Graph, Node (..), graph)
+import           Calco.Eval
+import           Calco.Graph       (Graph, Node (..), empty, graph)
 
-petsSemantics :: Semantics
-petsSemantics = semantics
+semantics :: Semantics
+semantics = s
   [ -- Pets name statistics over all pets.
     "petNamesStats"
     -- If pet's master is of the same age as his pet than they get price.
@@ -25,42 +28,47 @@ petsSemantics = semantics
   , "nameSpeciesCorrelation"
   ]
 
-cgraph :: CGraph InCont OutCont
-cgraph = (, petsSemantics) $ env
-  [ "pets"    `ap0` outCont ["pet.id", "pet.name", "pet.age", "pet.speciesId"] [] []
-  , "persons" `ap0` outCont ["person.id", "person.name", "person.age"]         [] []
-  , "friends" `ap0` outCont ["friend.personId", "friend.petId"]                [] []
-  , "species" `ap0` outCont ["species.id", "species.name"]                     [] []
-  ]
-  [ "petNamesStats" `ap1` inCont ["pet.name"]
-                                 []
-                                 ["sameAge", "noFromMesozoic"] -- To consider all pets
-                     -->  outCont [] [] []
+cgraph :: CGraph Impl.InCont Impl.OutCont
+cgraph = (, semantics) $ Env
+  { CGraph.streams = m
+    [ "pets"    `ap0` emptyOut { attrsO = NewAttrs $ attrs' "pet" ["id", "name", "age", "speciesId"] }
+    , "persons" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "person" ["id", "name", "age"] }
+    , "friends" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "friend" ["personId", "petId"] }
+    , "species" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "species" ["id", "name"] }
+    ]
+  , CGraph.tfms1 = m
+    [ "petNamesStats" `ap1` emptyIn { attrsI = attr "pet.name"
+                                    , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
+                       -->  emptyOut
 
-  , "priceNames" `ap1` inCont ["person.name", "pet.name"] ["sameAge", "noFromMesozoic"] []
-                  -->  outContN [] [] []
+    , "priceNames" `ap1` emptyIn { attrsI = attrs ["person.name", "pet.name"]
+                                 , propsI = props ["sameAge", "noFromMesozoic"] }
+                    -->  emptyOut { attrsO = delAttrs }
 
-  , "nameSpeciesCorrelation" `ap1` inCont ["person.name", "species.name"] ["noFromMesozoic"] []
-                              -->  outContN [] [] []
+    , "nameSpeciesCorrelation" `ap1` emptyIn { attrsI = attrs ["person.name", "species.name"]
+                                             , propsI = prop "noFromMesozoic" }
+                                -->  emptyOut { attrsO = delAttrs }
 
-  , "filterMesozoic" `ap1` inCont ["pet.age"] [] []
-                      -->  outCont [] ["noFromMesozoic"] []
+    , "filterMesozoic" `ap1` emptyIn { attrsI = attr "pet.age" }
+                        -->  emptyOut { propsO = prop "noFromMesozoic" }
 
-  , "filterSameAge" `ap1` inCont ["pet.age", "person.age"] [] []
-                     -->  outCont [] ["sameAge"] []
-  ]
-  [ "joinPetsFriends" `ap2` inCont ["pet.id"] [] []
-                       <&>  inCont ["friend.petId"] [] []
-                       -->  outCont [] [] []
+    , "filterSameAge" `ap1` emptyIn { attrsI = attrs ["pet.age", "person.age"] }
+                       -->  emptyOut { propsO = prop "sameAge" }
+    ]
+  , CGraph.tfms2 = m
+    [ "joinPetsFriends" `ap2` emptyIn { attrsI = attr "pet.id" }
+                         <&>  emptyIn { attrsI = attr "friend.petId" }
+                         -->  emptyOut
 
-  , "joinPersonsFriends" `ap2` inCont ["person.id"] [] []
-                          <&>  inCont ["friend.personId"] [] []
-                          -->  outCont [] [] []
+    , "joinPersonsFriends" `ap2` emptyIn { attrsI = attr "person.id" }
+                            <&>  emptyIn { attrsI = attr "friend.personId" }
+                            -->  emptyOut
 
-  , "joinPetsSpecies" `ap2` inCont ["pet.speciesId"] [] []
-                       <&>  inCont ["species.id"] [] []
-                       -->  outCont [] [] []
-  ]
+    , "joinPetsSpecies" `ap2` emptyIn { attrsI = attr "pet.speciesId" }
+                         <&>  emptyIn { attrsI = attr "species.id" }
+                         -->  emptyOut
+    ]
+  }
 
 graphs :: [Graph]
 graphs = [graph1]

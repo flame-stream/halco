@@ -24,7 +24,7 @@ data Node =
     Stream NodeName
   | Tfm1 NodeName NodeId
   | Tfm2 NodeName NodeId NodeId
-  deriving (Eq, Ord, Show)
+  deriving (Ord, Eq, Show)
 
 newtype Graph = Graph (Map NodeId Node)
 

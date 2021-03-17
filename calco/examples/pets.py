@@ -109,7 +109,7 @@ def filter_mesozoic(pcoll: beam.PCollection) -> beam.PCollection:
 
 @tfm1(
     InCont(attrs={"pet.age", "person.age"}),
-    OutCont(props={same_age})
+    OutCont(props={same_age}),
 )
 def filter_same_age(pcoll: beam.PCollection) -> beam.PCollection:
     return pcoll | beam.Filter(lambda e: e[pet.age] == e[person.age])
