@@ -2,28 +2,28 @@
 
 module Main where
 
-import           Control.Monad       (forM_)
-import           Data.Map            ((!))
+import           Control.Monad             (forM_)
+import           Data.Map                  ((!))
 
 import           Calco.Eval
-import           Calco.Examples.Pets
-import           Calco.Graph         (graph2Dot)
+import           Calco.Examples.SplashTime
+import           Calco.Graph               (graph2Dot)
 import           Calco.GraphGen.Fast
 
 main :: IO ()
 main = do
   let graph = head $ genGraphs cgraph
-  let res = eval graph env'
+  -- let res = eval graph env'
   print graph
-  putStrLn ""
-  putStrLn $ "Result: " <> show res
-  putStrLn ""
-  putStrLn $ "petNamesStats: " <> show (res ! "petNamesStats")
-  putStrLn ""
-  putStrLn $ "priceNames: " <> show (res ! "priceNames")
-  putStrLn ""
-  putStrLn $ "nameSpeciesCorrelation: " <> show (res ! "nameSpeciesCorrelation")
-  putStrLn ""
+  -- putStrLn ""
+  -- putStrLn $ "Result: " <> show res
+  -- putStrLn ""
+  -- putStrLn $ "petNamesStats: " <> show (res ! "petNamesStats")
+  -- putStrLn ""
+  -- putStrLn $ "priceNames: " <> show (res ! "priceNames")
+  -- putStrLn ""
+  -- putStrLn $ "nameSpeciesCorrelation: " <> show (res ! "nameSpeciesCorrelation")
+  -- putStrLn ""
 
   -- undefined
 

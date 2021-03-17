@@ -31,42 +31,54 @@ semantics = s
 cgraph :: CGraph Impl.InCont Impl.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.streams = m
-    [ "pets"    `ap0` emptyOut { attrsO = NewAttrs $ attrs' "pet" ["id", "name", "age", "speciesId"] }
-    , "persons" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "person" ["id", "name", "age"] }
-    , "friends" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "friend" ["personId", "petId"] }
-    , "species" `ap0` emptyOut { attrsO = NewAttrs $ attrs' "species" ["id", "name"] }
+    [ "pets"    `ap0` emptyOut
+      { attrsO = NewAttrs $ attrs' "pet" ["id", "name", "age", "speciesId"] }
+    , "persons" `ap0` emptyOut
+      { attrsO = NewAttrs $ attrs' "person" ["id", "name", "age"] }
+    , "friends" `ap0` emptyOut
+      { attrsO = NewAttrs $ attrs' "friend" ["personId", "petId"] }
+    , "species" `ap0` emptyOut
+      { attrsO = NewAttrs $ attrs' "species" ["id", "name"] }
     ]
   , CGraph.tfms1 = m
-    [ "petNamesStats" `ap1` emptyIn { attrsI = attr "pet.name"
-                                    , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
-                       -->  emptyOut
+    [ "petNamesStats"
+      `ap1` emptyIn { attrsI = attr "pet.name"
+                    , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
+       -->  emptyOut
 
-    , "priceNames" `ap1` emptyIn { attrsI = attrs ["person.name", "pet.name"]
-                                 , propsI = props ["sameAge", "noFromMesozoic"] }
-                    -->  emptyOut { attrsO = delAttrs }
+    , "priceNames"
+      `ap1` emptyIn  { attrsI = attrs ["person.name", "pet.name"]
+                     , propsI = props ["sameAge", "noFromMesozoic"] }
+       -->  emptyOut { attrsO = delAttrs }
 
-    , "nameSpeciesCorrelation" `ap1` emptyIn { attrsI = attrs ["person.name", "species.name"]
-                                             , propsI = prop "noFromMesozoic" }
-                                -->  emptyOut { attrsO = delAttrs }
+    , "nameSpeciesCorrelation"
+      `ap1` emptyIn  { attrsI = attrs ["person.name", "species.name"]
+                     , propsI = prop "noFromMesozoic" }
+       -->  emptyOut { attrsO = delAttrs }
 
-    , "filterMesozoic" `ap1` emptyIn { attrsI = attr "pet.age" }
-                        -->  emptyOut { propsO = prop "noFromMesozoic" }
+    , "filterMesozoic"
+      `ap1` emptyIn  { attrsI = attr "pet.age" }
+       -->  emptyOut { propsO = prop "noFromMesozoic" }
 
-    , "filterSameAge" `ap1` emptyIn { attrsI = attrs ["pet.age", "person.age"] }
-                       -->  emptyOut { propsO = prop "sameAge" }
+    , "filterSameAge"
+      `ap1` emptyIn  { attrsI = attrs ["pet.age", "person.age"] }
+       -->  emptyOut { propsO = prop "sameAge" }
     ]
   , CGraph.tfms2 = m
-    [ "joinPetsFriends" `ap2` emptyIn { attrsI = attr "pet.id" }
-                         <&>  emptyIn { attrsI = attr "friend.petId" }
-                         -->  emptyOut
+    [ "joinPetsFriends"
+      `ap2` emptyIn { attrsI = attr "pet.id" }
+       <&>  emptyIn { attrsI = attr "friend.petId" }
+       -->  emptyOut
 
-    , "joinPersonsFriends" `ap2` emptyIn { attrsI = attr "person.id" }
-                            <&>  emptyIn { attrsI = attr "friend.personId" }
-                            -->  emptyOut
+    , "joinPersonsFriends"
+      `ap2` emptyIn { attrsI = attr "person.id" }
+       <&>  emptyIn { attrsI = attr "friend.personId" }
+       -->  emptyOut
 
-    , "joinPetsSpecies" `ap2` emptyIn { attrsI = attr "pet.speciesId" }
-                         <&>  emptyIn { attrsI = attr "species.id" }
-                         -->  emptyOut
+    , "joinPetsSpecies"
+      `ap2` emptyIn { attrsI = attr "pet.speciesId" }
+       <&>  emptyIn { attrsI = attr "species.id" }
+       -->  emptyOut
     ]
   }
 
