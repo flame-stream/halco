@@ -14,7 +14,7 @@ main :: IO ()
 main = do
   let graph = head $ genGraphs cgraph
   -- let res = eval graph env'
-  print graph
+  -- print graph
   -- putStrLn ""
   -- putStrLn $ "Result: " <> show res
   -- putStrLn ""

@@ -14,19 +14,20 @@ import           Calco.Eval
 import           Calco.Graph
 
 semantics :: Semantics
-semantics = s ["splashStats"]
+semantics = s ["stats"]
 
 cgraph :: CGraph Impl.InCont Impl.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.streams = m
     [ "frontLogs" `ap0` emptyOut
-      { attrsO = NewAttrs $ attrs' "front" ["id", "queryId", "userId", "ts"] }
+      { attrsO = NewAttrs $ attrs' "front" ["version", "queryId", "userId", "ts"] }
+
     , "backLogs" `ap0` emptyOut
-      { attrsO = NewAttrs $ attrs' "back" ["queryId", "userId", "ts", "payload"] }
+      { attrsO = NewAttrs $ attrs' "back" ["id", "queryId", "userId", "ts", "payload"] }
     ]
   , CGraph.tfms1 = m
     [ "addFrontFeatures"
-      `ap1` emptyIn  { attrsI = attr "front.id" }
+      `ap1` emptyIn  { attrsI = attr "front.version" }
        -->  emptyOut { attrsO = AddAttrs $ attr "frontFeatures" }
 
     , "addUserFeatures"
@@ -35,16 +36,21 @@ cgraph = (, semantics) $ Env
 
     , "setSessionTrigger"
       `ap1` emptyIn  { attrsI  = attrs ["frontFeatures", "userFeatures", "front.ts", "back.ts"]
-                     , propsI' = prop "frontsFiltered" }
+                     , propsI  = prop "frontsFiltered"
+                     , propsI' = prop "authoredUsers" }
        -->  emptyOut { propsO  = prop "sessional" }
 
+    , "filterUsers"
+      `ap1` emptyIn  { attrsI = attr "userFeatures" }
+       -->  emptyOut { propsO = prop "authoredUsers" }
+
     , "filterFronts"
-      `ap1` emptyIn  { attrsI = attr "front.id" }
+      `ap1` emptyIn  { attrsI = attr "front.version" }
        -->  emptyOut { propsO = prop "frontsFiltered" }
 
-    , "splashStats"
+    , "stats"
       `ap1` emptyIn  { attrsI = attrs ["front.userId", "front.ts", "back.ts", "back.payload"]
-                     , propsI = props ["sessional", "frontsFiltered"] }
+                     , propsI = props ["sessional", "frontsFiltered", "authoredUsers"] }
        -->  emptyOut { attrsO = delAttrs }
     ]
   , CGraph.tfms2 = m
