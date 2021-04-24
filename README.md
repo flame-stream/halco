@@ -1,3 +1,3 @@
-# calcohs
+# halco
 
-calco prototype written in Haskell.
+Calco prototype written in Haskell.
