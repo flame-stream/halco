@@ -31,5 +31,5 @@ empty = State { attrs = Set.empty
               , props = Set.empty }
 
 union :: StateContext a p => State a p -> State a p -> State a p
-union s1 s2 = State { attrs = attrs s1 `Set.union` attrs s2
-                    , props = props s1 `Set.union` props s2 }
+union s1 s2 = State { attrs = attrs s1 <> attrs s2
+                    , props = props s1 <> props s2 }

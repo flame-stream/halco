@@ -11,6 +11,7 @@ import qualified Data.Set          as Set
 import           Calco.Conts.Types (InCont, OutCont)
 import           Calco.Defs        (NodeName)
 
+-- TODO rename to source
 data CStream o where
   CStream :: OutCont o => o -> CStream o
 

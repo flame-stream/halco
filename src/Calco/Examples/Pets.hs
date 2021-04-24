@@ -13,7 +13,7 @@ import           Calco.Conts.Impl
 import qualified Calco.Conts.Impl  as Impl
 import           Calco.Conts.Types
 import           Calco.DSL
-import           Calco.Eval
+import           Calco.EGraph
 import           Calco.Graph       (Graph, Node (..), empty, graph)
 
 semantics :: Semantics

@@ -33,7 +33,6 @@ library
       Calco.Defs
       Calco.DSL
       Calco.EGraph
-      Calco.Eval
       Calco.Examples.Pets
       Calco.Examples.SplashTime
       Calco.Graph

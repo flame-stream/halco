@@ -5,7 +5,7 @@ module Calco.Beam where
 import           Data.Map                 (Map)
 import qualified Data.Map                 as Map
 
-import           Calco.Eval               (EStream, ETfm1, ETfm2)
+import           Calco.EGraph             (EStream, ETfm1, ETfm2)
 import           Calco.Utils.Data.Functor (fmap2, (<$$>))
 import           Calco.Utils.Data.Map     (insertOrApply)
 

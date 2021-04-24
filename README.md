@@ -1,3 +1,3 @@
-# calco
+# calcohs
 
-`goto README.ru.md`
+calco prototype written in Haskell.
