@@ -7,5 +7,6 @@ type CTInfo = ()
 -- Runtime information.
 type RTInfo = ()
 
-cost :: Graph -> CTInfo -> RTInfo -> Integer
+cost :: CTInfo -> Maybe RTInfo
+     -> Graph -> Integer
 cost = undefined

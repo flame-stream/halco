@@ -5,7 +5,7 @@ import qualified Data.Map          as Map
 import           Data.Set          (Set)
 import qualified Data.Set          as Set
 
-import           Halco.CGraph      (CStream (CStream), CTfm1 (CTfm1),
+import           Halco.CGraph      (CSource (CSource), CTfm1 (CTfm1),
                                     CTfm2 (CTfm2))
 import           Halco.Conts.Impl  (Attr (..), OutAttrs (NewAttrs), Prop (..))
 import           Halco.Conts.Types (InCont, OutCont)
@@ -31,8 +31,8 @@ props = Set.fromList . map Prop
 (->>) = (,)
 
 infix 1 `ap0`
-ap0 :: OutCont o => NodeName -> o -> (NodeName, CStream o)
-ap0 nn o = (nn, CStream o)
+ap0 :: OutCont o => NodeName -> o -> (NodeName, CSource o)
+ap0 nn o = (nn, CSource o)
 
 infix 1 `ap1`
 ap1 :: (InCont i, OutCont o) => NodeName -> (i, o) -> (NodeName, CTfm1 i o)

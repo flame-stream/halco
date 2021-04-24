@@ -18,7 +18,7 @@ semantics = s ["stats"]
 
 cgraph :: CGraph Impl.InCont Impl.OutCont
 cgraph = (, semantics) $ Env
-  { CGraph.streams = m
+  { CGraph.sources = m
     [ "frontLogs" `ap0` emptyOut
       { attrsO = NewAttrs $ attrs' "front" ["id", "version", "queryId", "userId", "ts"] }
 

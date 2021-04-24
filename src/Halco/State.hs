@@ -11,7 +11,7 @@ import           Halco.Defs
 
 type StateContext a p = (Attr a, Prop p)
 
--- Dataflow state
+-- Dataflow state (information about the dataflow)
 data State a p where
   State :: StateContext a p
         => { attrs :: Set a

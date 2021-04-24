@@ -11,7 +11,7 @@ import           Data.Map                     (Map, (!))
 import qualified Data.Map                     as Map
 import           Data.Set                     (isSubsetOf)
 
-import           Halco.CGraph                 (CGraph, CStream (CStream),
+import           Halco.CGraph                 (CGraph, CSource (CSource),
                                                CTfm1 (CTfm1), CTfm2 (CTfm2),
                                                Env, Semantics)
 import qualified Halco.CGraph                 as CGraph
@@ -54,9 +54,9 @@ checkTermHelper :: ContContext a p i o
 checkTermHelper e g@(Graph m) checked nid
   | nid `Map.member` checked = Right (checked ! nid, checked)
   | otherwise = case m ! nid of
-    Stream nn -> do
-      let state = toState $ CGraph.streams e ! nn & \case CStream o -> o
-      let checked' = check state checked
+    Source nn ->
+      let state = toState $ CGraph.sources e ! nn & \case CSource o -> o in
+      let checked' = check state checked in
       Right (state, checked')
     Tfm1 nn nid' -> do
       let CTfm1 i o = CGraph.tfms1 e ! nn

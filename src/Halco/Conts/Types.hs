@@ -8,8 +8,8 @@ import           Data.Kind   (Type)
 
 import           Halco.State
 
--- Error type of the context match.
--- Contains match input that caused error.
+-- Error type of the context match
+-- Contains match input that caused error
 type ContMatchError a p i = (State a p, i)
 
 class StateContext (ATi i) (PTi i) => InCont i where

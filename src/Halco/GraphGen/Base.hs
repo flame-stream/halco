@@ -30,11 +30,11 @@ import           Halco.Utils.ListT         (nilLT)
 
 -- Very slow exponential algorithm, do not use it!
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
-genGraphs (e, s) =
-  let (sources, streams, nidMax) = graphSources e
+genGraphs (e, s) = -- TODO q
+  let (q1, q2, nidMax) = graphSources e
       tfmsNames = Set.fromList $ Map.keys (CGraph.tfms1 e) <> Map.keys (CGraph.tfms2 e)
-      nodes = genFromSources 5 e tfmsNames sources
-      bigGraph = graph $ streams ++ StateM.evalState (ListT.toList nodes) nidMax
+      nodes = genFromSources 5 e tfmsNames q1
+      bigGraph = graph $ q2 ++ StateM.evalState (ListT.toList nodes) nidMax
       graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s
    in filter Graph.noSameNodes graphs -- Every semantics node also will occur only once.
 

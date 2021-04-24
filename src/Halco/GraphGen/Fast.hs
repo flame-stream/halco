@@ -22,11 +22,11 @@ import           Halco.State              (State)
 import           Halco.Utils.Data.Functor ((<$$>))
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
-genGraphs (e, s) =
-  let (sources, streams, nidMax) = graphSources e
+genGraphs (e, s) = -- TODO q
+  let (q1, q2, nidMax) = graphSources e
       nTfms = Map.size (CGraph.tfms1 e) + Map.size (CGraph.tfms2 e)
-      tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> sources) Set.empty
-      bigGraph = graph $ streams ++ tfms
+      tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> q1) Set.empty
+      bigGraph = graph $ q2 ++ tfms
       graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s
    in filter Graph.noSameNodes graphs -- Every semantics node also will occur only once.
 

@@ -17,11 +17,11 @@ import           Halco.Utils.Data.Traversable (countOccs)
 
 type NodeId = Integer
 
--- Set of nids that have terms in the graph that form its semantics.
+-- Set of nids of the graph nodes that form its semantics
 type SemanticNids = Set NodeId
 
 data Node =
-    Stream NodeName
+    Source NodeName
   | Tfm1 NodeName NodeId
   | Tfm2 NodeName NodeId NodeId
   deriving (Ord, Eq, Show)
@@ -54,7 +54,7 @@ union (Graph m1) (Graph m2) = Graph $ m1 <> m2
 
 nodeName :: Node -> NodeName
 nodeName = \case
-  Stream nn   -> nn
+  Source nn   -> nn
   Tfm1 nn _   -> nn
   Tfm2 nn _ _ -> nn
 
@@ -75,7 +75,7 @@ extractPipeline g nids = Map.foldrWithKey f empty $ toMap g
     extractPipeline' g@(Graph m) nid g'@(Graph m')
       | nid `Map.member` m' = g'
       | otherwise = m ! nid & Graph . \case
-        s@(Stream _) -> Map.insert nid s m'
+        s@(Source _) -> Map.insert nid s m'
         t@(Tfm1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
         t@(Tfm2 _ nid1 nid2) ->
           let m1 = toMap $ extractPipeline' g nid1 g'
@@ -104,7 +104,7 @@ graph2Dot g name =
    in prefix ++ vtxes ++ strGraph ++ suffix
   where
     edge2dot :: (NodeId, Node) -> String
-    edge2dot (id, Stream nn) = ""
+    edge2dot (id, Source nn) = ""
     edge2dot (id, Tfm1 nn nid) = nameLookup nid  ++ " -> " ++ "\"" ++ nn ++ "\""
     edge2dot (id, Tfm2 nn nid1 nid2) =
       let edge1 = nameLookup nid1 ++ " -> " ++ "\"" ++ nn ++ "\""
@@ -112,4 +112,4 @@ graph2Dot g name =
        in edge1 ++ "\n" ++ edge2
 
     nameLookup :: NodeId -> String
-    nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Stream "undefined id") id (toMap g)) ++ "\""
+    nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Source "undefined id") id (toMap g)) ++ "\""

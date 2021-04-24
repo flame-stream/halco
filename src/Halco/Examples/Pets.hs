@@ -30,7 +30,7 @@ semantics = s
 
 cgraph :: CGraph Impl.InCont Impl.OutCont
 cgraph = (, semantics) $ Env
-  { CGraph.streams = m
+  { CGraph.sources = m
     [ "pets"    `ap0` emptyOut
       { attrsO = NewAttrs $ attrs' "pet" ["id", "name", "age", "speciesId"] }
     , "persons" `ap0` emptyOut
@@ -88,10 +88,10 @@ graphs = [graph1]
 -- https://dreampuf.github.io/GraphvizOnline/#digraph%20%22graph1%22%20%7B%0A%0A%22joinPetsSpecies%22%0A%22joinPersonsFriends%22%0A%22joinPetsFriends%22%0A%22filterSameAge%22%0A%22filterMesozoic%22%0A%22nameSpeciesCorrelation%22%0A%22priceNames%22%0A%22petNamesStats%22%0A%22species%22%0A%22friends%22%0A%22persons%22%0A%22pets%22%0A%22joinPersonsFriends%22%20-%3E%20%22joinPetsSpecies%22%0A%22species%22%20-%3E%20%22joinPetsSpecies%22%0A%22persons%22%20-%3E%20%22joinPersonsFriends%22%0A%22joinPetsFriends%22%20-%3E%20%22joinPersonsFriends%22%0A%22filterMesozoic%22%20-%3E%20%22joinPetsFriends%22%0A%22friends%22%20-%3E%20%22joinPetsFriends%22%0A%22joinPersonsFriends%22%20-%3E%20%22filterSameAge%22%0A%22petNamesStats%22%20-%3E%20%22filterMesozoic%22%0A%22joinPetsSpecies%22%20-%3E%20%22nameSpeciesCorrelation%22%0A%22filterSameAge%22%20-%3E%20%22priceNames%22%0A%22pets%22%20-%3E%20%22petNamesStats%22%0A%7D
 graph1 :: Graph
 graph1 = graph
-  [ 1 ->> Stream "pets"
-  , 2 ->> Stream "persons"
-  , 3 ->> Stream "friends"
-  , 4 ->> Stream "species"
+  [ 1 ->> Source "pets"
+  , 2 ->> Source "persons"
+  , 3 ->> Source "friends"
+  , 4 ->> Source "species"
 
   , 5 ->> Tfm1 "petNamesStats" 1
   , 6 ->> Tfm1 "priceNames" 9
@@ -109,7 +109,7 @@ type E = Map String String
 
 env' :: Env' E
 env' = Env'
-  { streams = m
+  { sources = m
     [ "pets" ->> pets
     , "persons" ->> persons
     , "friends" ->> friends
@@ -129,7 +129,7 @@ env' = Env'
     ]
   }
 
-pets :: EStream E
+pets :: ESource E
 pets =
   [ pet ["1", "a", "12", "3"]
   , pet ["2", "b", "1", "1"]
@@ -139,7 +139,7 @@ pets =
   where
     pet = m . zip ["pet.id", "pet.name", "pet.age", "pet.speciesId"]
 
-persons :: EStream E
+persons :: ESource E
 persons =
   [ person ["1", "Bob", "5"]
   , person ["2", "Sarah", "1"]
@@ -150,7 +150,7 @@ persons =
   where
     person = m . zip ["person.id", "person.name", "person.age"]
 
-friends :: EStream E
+friends :: ESource E
 friends =
   [ friend ["1", "2"]
   , friend ["4", "3"]
@@ -158,7 +158,7 @@ friends =
   where
     friend = m . zip ["friend.personId", "friend.petId"]
 
-species :: EStream E
+species :: ESource E
 species =
   [ specie ["3", "dog"]
   , specie ["1", "cat"]

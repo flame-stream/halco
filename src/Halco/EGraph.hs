@@ -7,20 +7,20 @@ import           Halco.Defs  (NodeName)
 import           Halco.Graph (Graph (Graph), Node (..), NodeId)
 import qualified Halco.Graph as Graph
 
-type EStream e = [e]
-type ETfm1 e = EStream e -> EStream e
-type ETfm2 e = EStream e -> EStream e -> EStream e
+type ESource e = [e]
+type ETfm1 e = ESource e -> ESource e
+type ETfm2 e = ESource e -> ESource e -> ESource e
 
--- Element types should be the same to be able to permute nodes.
+-- Element types should be the same to be able to permute nodes
 data Env' e = Env'
-  { streams :: Map NodeName (EStream e)
+  { sources :: Map NodeName (ESource e)
   , tfms1   :: Map NodeName (ETfm1 e)
   , tfms2   :: Map NodeName (ETfm2 e)
   }
 
-newtype EGraph e = EGraph (Map NodeName (EStream e))
+newtype EGraph e = EGraph (Map NodeName (ESource e))
 
-toMap :: EGraph e -> Map NodeName (EStream e)
+toMap :: EGraph e -> Map NodeName (ESource e)
 toMap (EGraph m) = m
 
 eval :: Graph -> Env' e -> EGraph e
@@ -32,7 +32,7 @@ eval g@(Graph m) e = EGraph $ Map.foldrWithKey f Map.empty m
     eval' g@(Graph m) e nid m'
       | nodeName nid `Map.member` m' = m'
       | otherwise = case m ! nid of
-        Stream nn -> Map.insert nn (streams e ! nn) m'
+        Source nn -> Map.insert nn (sources e ! nn) m'
         Tfm1 nn nid' ->
           let m' = eval' g e nid' m'
               s' = m' ! nodeName nid'
