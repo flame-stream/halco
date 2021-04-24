@@ -1,17 +1,17 @@
 {-# LANGUAGE TupleSections #-}
 
-module Calco.Examples.SplashTime where
+module Halco.Examples.SplashTime where
 
 import           Data.Map          (Map)
 
-import           Calco.CGraph      (CGraph, Env (Env), Semantics)
-import qualified Calco.CGraph      as CGraph
-import           Calco.Conts.Impl
-import qualified Calco.Conts.Impl  as Impl
-import           Calco.Conts.Types
-import           Calco.DSL
-import           Calco.EGraph
-import           Calco.Graph
+import           Halco.CGraph      (CGraph, Env (Env), Semantics)
+import qualified Halco.CGraph      as CGraph
+import           Halco.Conts.Impl
+import qualified Halco.Conts.Impl  as Impl
+import           Halco.Conts.Types
+import           Halco.DSL
+import           Halco.EGraph
+import           Halco.Graph
 
 semantics :: Semantics
 semantics = s ["stats"]

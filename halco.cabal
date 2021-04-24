@@ -4,14 +4,14 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           calcohs
+name:           halco
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/calcohs#readme>
-homepage:       https://github.com/githubuser/calcohs#readme
-bug-reports:    https://github.com/githubuser/calcohs/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2020 Author name here
+description:    Please see the README on GitHub at <https://github.com/flame-stream/halco#readme>
+homepage:       https://github.com/flame-stream/halco#readme
+bug-reports:    https://github.com/flame-stream/halco/issues
+author:         Andrey Stoyan
+maintainer:     yukio@yandex-team.ru
+copyright:      2020 Andrey Stoyan
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -20,33 +20,33 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/calcohs
+  location: https://github.com/flame-stream/halco
 
 library
   exposed-modules:
-      Calco.Beam
-      Calco.CGraph
-      Calco.Check
-      Calco.Conts.Impl
-      Calco.Conts.Types
-      Calco.Cost
-      Calco.Defs
-      Calco.DSL
-      Calco.EGraph
-      Calco.Examples.Pets
-      Calco.Examples.SplashTime
-      Calco.Graph
-      Calco.GraphGen.Base
-      Calco.GraphGen.Fast
-      Calco.GraphGen.Utils
-      Calco.State
-      Calco.Utils.Data.Functor
-      Calco.Utils.Data.List
-      Calco.Utils.Data.Map
-      Calco.Utils.Data.Traversable
-      Calco.Utils.ListT
+      Halco.Beam
+      Halco.CGraph
+      Halco.Check
+      Halco.Conts.Impl
+      Halco.Conts.Types
+      Halco.Cost
+      Halco.Defs
+      Halco.DSL
+      Halco.EGraph
+      Halco.Examples.Pets
+      Halco.Examples.SplashTime
+      Halco.Graph
+      Halco.GraphGen.Base
+      Halco.GraphGen.Fast
+      Halco.GraphGen.Utils
+      Halco.State
+      Halco.Utils.Data.Functor
+      Halco.Utils.Data.List
+      Halco.Utils.Data.Map
+      Halco.Utils.Data.Traversable
+      Halco.Utils.ListT
   other-modules:
-      Paths_calcohs
+      Paths_halco
   hs-source-dirs:
       src
   ghc-options: -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -Wno-unused-top-binds -Wno-unused-imports -Wno-name-shadowing -Wno-unused-matches
@@ -60,30 +60,30 @@ library
     , transformers
   default-language: Haskell2010
 
-executable calcohs-exe
+executable halco-exe
   main-is: Main.hs
   other-modules:
-      Paths_calcohs
+      Paths_halco
   hs-source-dirs:
       app
   ghc-options: -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -Wno-unused-top-binds -Wno-unused-imports -Wno-name-shadowing -Wno-unused-matches -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , calcohs
     , containers
+    , halco
   default-language: Haskell2010
 
-test-suite calcohs-test
+test-suite halco-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_calcohs
+      Paths_halco
   hs-source-dirs:
       test
   ghc-options: -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -Wno-unused-top-binds -Wno-unused-imports -Wno-name-shadowing -Wno-unused-matches -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , calcohs
     , containers >=0.6
+    , halco
     , hspec >=2.5
   default-language: Haskell2010

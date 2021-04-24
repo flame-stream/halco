@@ -1,15 +1,15 @@
 {-# LANGUAGE GADTs      #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Calco.CGraph where
+module Halco.CGraph where
 
 import           Data.Map          (Map)
 import qualified Data.Map          as Map
 import           Data.Set          (Set)
 import qualified Data.Set          as Set
 
-import           Calco.Conts.Types (InCont, OutCont)
-import           Calco.Defs        (NodeName)
+import           Halco.Conts.Types (InCont, OutCont)
+import           Halco.Defs        (NodeName)
 
 -- TODO rename to source
 data CStream o where

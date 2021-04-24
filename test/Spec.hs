@@ -7,13 +7,13 @@ import           Data.Map            (Map)
 import           Debug.Trace
 import           Test.Hspec
 
-import           Calco.CGraph
-import           Calco.Check
-import           Calco.Conts.Types
-import           Calco.Defs
-import qualified Calco.Examples.Pets as Pets
-import           Calco.Graph
-import           Calco.GraphGen.Fast
+import           Halco.CGraph
+import           Halco.Check
+import           Halco.Conts.Types
+import           Halco.Defs
+import qualified Halco.Examples.Pets as Pets
+import           Halco.Graph
+import           Halco.GraphGen.Fast
 
 main :: IO ()
 main = hspec $ do

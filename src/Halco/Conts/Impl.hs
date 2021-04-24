@@ -1,15 +1,15 @@
 {-# LANGUAGE LambdaCase   #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Calco.Conts.Impl where
+module Halco.Conts.Impl where
 
 import           Data.Set          (Set, (\\))
 import qualified Data.Set          as Set
 
-import qualified Calco.Conts.Types as Types
-import           Calco.Defs        (NodeName)
-import qualified Calco.Defs        as Defs
-import           Calco.State       (State (State), attrs, props)
+import qualified Halco.Conts.Types as Types
+import           Halco.Defs        (NodeName)
+import qualified Halco.Defs        as Defs
+import           Halco.State       (State (State), attrs, props)
 
 type AttrName = String
 type PropName = String

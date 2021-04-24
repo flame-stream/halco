@@ -5,10 +5,10 @@ module Main where
 import           Control.Monad       (forM_)
 import           Data.Map            ((!))
 
-import           Calco.EGraph
-import           Calco.Examples.Pets
-import           Calco.Graph         (graph2Dot)
-import           Calco.GraphGen.Fast
+import           Halco.EGraph
+import           Halco.Examples.Pets
+import           Halco.Graph         (graph2Dot)
+import           Halco.GraphGen.Fast
 
 main :: IO ()
 main = do

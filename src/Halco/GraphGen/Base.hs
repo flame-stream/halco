@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Calco.GraphGen.Base where
+module Halco.GraphGen.Base where
 
 import           Control.Applicative       ((<|>))
 import           Control.Monad             (guard)
@@ -16,17 +16,17 @@ import           Data.Set                  (Set)
 import qualified Data.Set                  as Set
 import           ListT
 
-import           Calco.CGraph              (CGraph, CTfm1 (..), CTfm2 (..),
+import           Halco.CGraph              (CGraph, CTfm1 (..), CTfm2 (..),
                                             Env (..))
-import qualified Calco.CGraph              as CGraph
-import           Calco.Conts.Types
-import           Calco.Defs                (NodeName)
-import           Calco.Graph               (Graph (..), Node (..), NodeId,
+import qualified Halco.CGraph              as CGraph
+import           Halco.Conts.Types
+import           Halco.Defs                (NodeName)
+import           Halco.Graph               (Graph (..), Node (..), NodeId,
                                             graph)
-import qualified Calco.Graph               as Graph
-import           Calco.GraphGen.Utils      (graphSources)
-import           Calco.State               (State)
-import           Calco.Utils.ListT         (nilLT)
+import qualified Halco.Graph               as Graph
+import           Halco.GraphGen.Utils      (graphSources)
+import           Halco.State               (State)
+import           Halco.Utils.ListT         (nilLT)
 
 -- Very slow exponential algorithm, do not use it!
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]

@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs         #-}
 {-# LANGUAGE TupleSections #-}
 
-module Calco.GraphGen.Fast (genGraphs) where
+module Halco.GraphGen.Fast (genGraphs) where
 
 import           Data.Map                 ((!))
 import qualified Data.Map                 as Map
@@ -9,17 +9,17 @@ import           Data.Set                 (Set)
 import qualified Data.Set                 as Set
 import           Data.Tuple.Extra         (fst3)
 
-import           Calco.CGraph             (CGraph, CTfm1 (CTfm1), CTfm2 (CTfm2),
+import           Halco.CGraph             (CGraph, CTfm1 (CTfm1), CTfm2 (CTfm2),
                                            Env (..))
-import qualified Calco.CGraph             as CGraph
-import           Calco.Conts.Types        (ContContext, InCont (..),
+import qualified Halco.CGraph             as CGraph
+import           Halco.Conts.Types        (ContContext, InCont (..),
                                            OutCont (..))
-import           Calco.Defs               (NodeName)
-import           Calco.Graph              (Graph, Node (..), NodeId, graph)
-import qualified Calco.Graph              as Graph
-import           Calco.GraphGen.Utils     (graphSources)
-import           Calco.State              (State)
-import           Calco.Utils.Data.Functor ((<$$>))
+import           Halco.Defs               (NodeName)
+import           Halco.Graph              (Graph, Node (..), NodeId, graph)
+import qualified Halco.Graph              as Graph
+import           Halco.GraphGen.Utils     (graphSources)
+import           Halco.State              (State)
+import           Halco.Utils.Data.Functor ((<$$>))
 
 genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
 genGraphs (e, s) =

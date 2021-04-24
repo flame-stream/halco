@@ -1,4 +1,4 @@
-module Calco.Utils.Data.Traversable where
+module Halco.Utils.Data.Traversable where
 
 import           Data.Map (Map, (!?))
 import qualified Data.Map as Map

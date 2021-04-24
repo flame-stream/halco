@@ -1,15 +1,15 @@
 {-# LANGUAGE GADTs        #-}
 {-# LANGUAGE ViewPatterns #-}
 
-module Calco.GraphGen.Utils where
+module Halco.GraphGen.Utils where
 
 import qualified Data.Map          as Map
 
-import           Calco.CGraph      (Env (..))
-import qualified Calco.CGraph      as CGraph
-import           Calco.Conts.Types (ContContext, OutCont (..))
-import           Calco.Graph       (Node (..), NodeId)
-import           Calco.State       (State)
+import           Halco.CGraph      (Env (..))
+import qualified Halco.CGraph      as CGraph
+import           Halco.Conts.Types (ContContext, OutCont (..))
+import           Halco.Graph       (Node (..), NodeId)
+import           Halco.State       (State)
 
 graphSources :: ContContext a p i o
              => Env i o -> ([(NodeId, State a p)], [(NodeId, Node)], NodeId)

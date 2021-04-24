@@ -2,11 +2,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeFamilies     #-}
 
-module Calco.Conts.Types where
+module Halco.Conts.Types where
 
 import           Data.Kind   (Type)
 
-import           Calco.State
+import           Halco.State
 
 -- Error type of the context match.
 -- Contains match input that caused error.

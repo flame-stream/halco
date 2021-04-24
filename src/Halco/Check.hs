@@ -2,7 +2,7 @@
 {-# LANGUAGE GADTs           #-}
 {-# LANGUAGE LambdaCase      #-}
 
-module Calco.Check where
+module Halco.Check where
 
 import           Control.Monad                (foldM)
 import           Data.Either.Combinators      (mapLeft)
@@ -11,17 +11,17 @@ import           Data.Map                     (Map, (!))
 import qualified Data.Map                     as Map
 import           Data.Set                     (isSubsetOf)
 
-import           Calco.CGraph                 (CGraph, CStream (CStream),
+import           Halco.CGraph                 (CGraph, CStream (CStream),
                                                CTfm1 (CTfm1), CTfm2 (CTfm2),
                                                Env, Semantics)
-import qualified Calco.CGraph                 as CGraph
-import           Calco.Conts.Types            (ContContext, ContMatchError,
+import qualified Halco.CGraph                 as CGraph
+import           Halco.Conts.Types            (ContContext, ContMatchError,
                                                InCont (..), OutCont (..))
-import           Calco.Graph                  (Graph (..), Node (..), NodeId)
-import qualified Calco.Graph                  as Graph
-import           Calco.State                  (State)
-import qualified Calco.State                  as State
-import           Calco.Utils.Data.Traversable (countOccs)
+import           Halco.Graph                  (Graph (..), Node (..), NodeId)
+import qualified Halco.Graph                  as Graph
+import           Halco.State                  (State)
+import qualified Halco.State                  as State
+import           Halco.Utils.Data.Traversable (countOccs)
 
 data CheckGraphError a p i =
     ContMatchError (ContMatchError a p i)

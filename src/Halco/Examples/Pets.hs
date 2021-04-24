@@ -1,20 +1,20 @@
 {-# LANGUAGE TupleSections #-}
 
-module Calco.Examples.Pets where
+module Halco.Examples.Pets where
 
 import           Data.Map          (Map, (!))
 import qualified Data.Map          as Map
 import qualified Data.Set          as Set
 
-import           Calco.Beam        (coReduceNode', pardoNodeP, reduceNode)
-import           Calco.CGraph      (CGraph, Env (Env), Semantics)
-import qualified Calco.CGraph      as CGraph
-import           Calco.Conts.Impl
-import qualified Calco.Conts.Impl  as Impl
-import           Calco.Conts.Types
-import           Calco.DSL
-import           Calco.EGraph
-import           Calco.Graph       (Graph, Node (..), empty, graph)
+import           Halco.Beam        (coReduceNode', pardoNodeP, reduceNode)
+import           Halco.CGraph      (CGraph, Env (Env), Semantics)
+import qualified Halco.CGraph      as CGraph
+import           Halco.Conts.Impl
+import qualified Halco.Conts.Impl  as Impl
+import           Halco.Conts.Types
+import           Halco.DSL
+import           Halco.EGraph
+import           Halco.Graph       (Graph, Node (..), empty, graph)
 
 semantics :: Semantics
 semantics = s

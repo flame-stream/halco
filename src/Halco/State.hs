@@ -2,16 +2,16 @@
 {-# LANGUAGE GADTs              #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Calco.State where
+module Halco.State where
 
 import           Data.Set   (Set)
 import qualified Data.Set   as Set
 
-import           Calco.Defs
+import           Halco.Defs
 
 type StateContext a p = (Attr a, Prop p)
 
--- State of the stream on the graph's edge.
+-- Dataflow state
 data State a p where
   State :: StateContext a p
         => { attrs :: Set a

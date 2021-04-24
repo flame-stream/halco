@@ -1,6 +1,6 @@
-module Calco.Cost where
+module Halco.Cost where
 
-import           Calco.Graph
+import           Halco.Graph
 
 -- Compile time information.
 type CTInfo = ()

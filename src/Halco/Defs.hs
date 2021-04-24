@@ -1,4 +1,4 @@
-module Calco.Defs where
+module Halco.Defs where
 
 -- Sorts of information about the stream:
 -- attributes that are available on each stream element;

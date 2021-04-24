@@ -1,4 +1,4 @@
-module Calco.Utils.Data.List where
+module Halco.Utils.Data.List where
 
 cartesianProduct :: [[a]] -> [[a]]
 cartesianProduct []       = []

@@ -1,10 +1,10 @@
-name: calcohs
+name: halco
 version: 0.1.0.0
-github: "githubuser/calcohs"
+github: "flame-stream/halco"
 license: BSD3
-author: "Author name here"
-maintainer: "example@example.com"
-copyright: "2020 Author name here"
+author: "Andrey Stoyan"
+maintainer: "yukio@yandex-team.ru"
+copyright: "2020 Andrey Stoyan"
 
 extra-source-files:
   - README.md
@@ -16,7 +16,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/githubuser/calcohs#readme>
+description: Please see the README on GitHub at <https://github.com/flame-stream/halco#readme>
 
 ghc-options:
   - -Wall
@@ -44,7 +44,7 @@ library:
     - extra
 
 executables:
-  calcohs-exe:
+  halco-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -52,11 +52,11 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - calcohs
+      - halco
       - containers
 
 tests:
-  calcohs-test:
+  halco-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -64,6 +64,6 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - calcohs
+      - halco
       - hspec >= 2.5
       - containers >= 0.6

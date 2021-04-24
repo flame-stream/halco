@@ -1,13 +1,13 @@
 {-# LANGUAGE GADTs #-}
 
-module Calco.Beam where
+module Halco.Beam where
 
 import           Data.Map                 (Map)
 import qualified Data.Map                 as Map
 
-import           Calco.EGraph             (EStream, ETfm1, ETfm2)
-import           Calco.Utils.Data.Functor (fmap2, (<$$>))
-import           Calco.Utils.Data.Map     (insertOrApply)
+import           Halco.EGraph             (EStream, ETfm1, ETfm2)
+import           Halco.Utils.Data.Functor (fmap2, (<$$>))
+import           Halco.Utils.Data.Map     (insertOrApply)
 
 -- Core Beam transform that maps function on stream.
 pardo :: (e -> [e']) -> EStream e -> EStream e'

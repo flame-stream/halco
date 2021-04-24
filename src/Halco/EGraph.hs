@@ -1,11 +1,11 @@
-module Calco.EGraph where
+module Halco.EGraph where
 
 import           Data.Map    (Map, (!))
 import qualified Data.Map    as Map
 
-import           Calco.Defs  (NodeName)
-import           Calco.Graph (Graph (Graph), Node (..), NodeId)
-import qualified Calco.Graph as Graph
+import           Halco.Defs  (NodeName)
+import           Halco.Graph (Graph (Graph), Node (..), NodeId)
+import qualified Halco.Graph as Graph
 
 type EStream e = [e]
 type ETfm1 e = EStream e -> EStream e

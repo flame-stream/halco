@@ -1,4 +1,4 @@
-module Calco.Utils.Data.Map where
+module Halco.Utils.Data.Map where
 
 import           Data.Map (Map, (!?))
 import qualified Data.Map as Map

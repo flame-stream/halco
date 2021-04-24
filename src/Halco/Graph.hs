@@ -1,7 +1,7 @@
 {-# LANGUAGE GADTs      #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Calco.Graph where
+module Halco.Graph where
 
 import           Data.Function                ((&))
 import           Data.Map                     (Map, (!))
@@ -9,11 +9,11 @@ import qualified Data.Map                     as Map
 import           Data.Set                     (Set)
 import qualified Data.Set                     as Set
 
-import           Calco.CGraph                 (Semantics)
-import           Calco.Defs                   (NodeName)
-import           Calco.Utils.Data.List        (cartesianProduct)
-import           Calco.Utils.Data.Map         (findKeys)
-import           Calco.Utils.Data.Traversable (countOccs)
+import           Halco.CGraph                 (Semantics)
+import           Halco.Defs                   (NodeName)
+import           Halco.Utils.Data.List        (cartesianProduct)
+import           Halco.Utils.Data.Map         (findKeys)
+import           Halco.Utils.Data.Traversable (countOccs)
 
 type NodeId = Integer
 
