@@ -78,9 +78,9 @@ extractPipeline g nids = Map.foldrWithKey f empty $ toMap g
         s@(Source _) -> Map.insert nid s m'
         t@(Tfm1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
         t@(Tfm2 _ nid1 nid2) ->
-          let m1 = toMap $ extractPipeline' g nid1 g'
-              m2 = toMap $ extractPipeline' g nid2 g'
-          in Map.insert nid t $ m1 <> m2
+          let m1 = toMap $ extractPipeline' g nid1 g' in
+          let m2 = toMap $ extractPipeline' g nid2 g' in
+          Map.insert nid t $ m1 <> m2
 
 findIds :: Graph -> NodeName -> [NodeId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m
@@ -95,21 +95,21 @@ noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
 
 graph2Dot :: Graph -> String -> String
 graph2Dot g name =
-  let prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {\n"
-      -- split by \n only if appending non-empty string (x)
-      delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "")
-      vtxes = foldr (delim . (\x -> "\"" ++ x ++ "\"")) "" (nodeNames g)
-      strGraph = foldr (delim . edge2dot) "" (toList g)
-      suffix = "\n}\n"
-   in prefix ++ vtxes ++ strGraph ++ suffix
+  let prefix = "digraph " ++ "\"" ++ name ++ "\"" ++" {\n" in
+  -- split by \n only if appending non-empty string (x)
+  let delim = (\ x y -> y ++ if x /= "" then "\n" ++ x else "") in
+  let vtxes = foldr (delim . (\x -> "\"" ++ x ++ "\"")) "" (nodeNames g) in
+  let strGraph = foldr (delim . edge2dot) "" (toList g) in
+  let suffix = "\n}\n" in
+  prefix ++ vtxes ++ strGraph ++ suffix
   where
     edge2dot :: (NodeId, Node) -> String
     edge2dot (id, Source nn) = ""
     edge2dot (id, Tfm1 nn nid) = nameLookup nid  ++ " -> " ++ "\"" ++ nn ++ "\""
     edge2dot (id, Tfm2 nn nid1 nid2) =
-      let edge1 = nameLookup nid1 ++ " -> " ++ "\"" ++ nn ++ "\""
-          edge2 = nameLookup nid2 ++ " -> " ++ "\"" ++ nn ++ "\""
-       in edge1 ++ "\n" ++ edge2
+      let edge1 = nameLookup nid1 ++ " -> " ++ "\"" ++ nn ++ "\"" in
+      let edge2 = nameLookup nid2 ++ " -> " ++ "\"" ++ nn ++ "\"" in
+      edge1 ++ "\n" ++ edge2
 
     nameLookup :: NodeId -> String
     nameLookup id = "\"" ++ nodeName (Map.findWithDefault (Source "undefined id") id (toMap g)) ++ "\""

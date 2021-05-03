@@ -72,11 +72,12 @@ reduceNode k reducer = pardo snd . combineValues reducer . groupBy k
 coReduceNode :: Ord k => (k1, e -> k) -> (k2, e -> k)
              -> (k -> (k1, [e]) -> (k2, [e]) -> [e]) -> ETfm2 e
 coReduceNode (k1, k) (k2, k') reducer es1 es2 =
-  let es1' = pardo (\e -> [(k  e, e)]) es1
-      es2' = pardo (\e -> [(k' e, e)]) es2
-   in pardo (\(k, (kes1, kes2)) -> reducer k kes1 kes2)
-    $ coGroupByKey (k1, es1') (k2, es2')
+  let es1' = pardo (\e -> [(k  e, e)]) es1 in
+  let es2' = pardo (\e -> [(k' e, e)]) es2 in
+  pardo (\(k, (kes1, kes2)) -> reducer k kes1 kes2)
+      $ coGroupByKey (k1, es1') (k2, es2')
 
 coReduceNode' :: (Ord k, Semigroup e) => (e -> k) -> (e -> k) -> ETfm2 e
-coReduceNode' k1 k2 = coReduceNode (undefined, k1) (undefined, k2)
-                                   (\k (_, es1) (_, es2) -> (<>) <$> es1 <*> es2)
+coReduceNode' k1 k2 = coReduceNode
+  (undefined, k1) (undefined, k2)
+  (\k (_, es1) (_, es2) -> (<>) <$> es1 <*> es2)

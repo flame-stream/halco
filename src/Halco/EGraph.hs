@@ -35,14 +35,14 @@ eval g@(Graph m) e = EGraph $ Map.foldrWithKey f Map.empty m
       | otherwise = case m ! nid of
         Source nn -> Map.insert nn (sources e ! nn) m'
         Tfm1 nn nid' ->
-          let m' = eval' g e nid' m'
-              s' = m' ! nodeName nid'
-           in Map.insert nn (tfms1 e ! nn $ s') m'
+          let m' = eval' g e nid' m' in
+          let s' = m' ! nodeName nid' in
+          Map.insert nn (tfms1 e ! nn $ s') m'
         Tfm2 nn nid1 nid2 ->
-          let m1 = eval' g e nid1 m'
-              s1 = m1 ! nodeName nid1
-              m2 = eval' g e nid2 m'
-              s2 = m2 ! nodeName nid2
-           in Map.insert nn ((tfms2 e ! nn) s1 s2) $ m1 <> m2
+          let m1 = eval' g e nid1 m' in
+          let s1 = m1 ! nodeName nid1 in
+          let m2 = eval' g e nid2 m' in
+          let s2 = m2 ! nodeName nid2 in
+          Map.insert nn ((tfms2 e ! nn) s1 s2) $ m1 <> m2
       where
         nodeName nid = Graph.nodeName $ m ! nid
