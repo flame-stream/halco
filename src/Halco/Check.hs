@@ -11,9 +11,9 @@ import           Data.Map                     (Map, (!))
 import qualified Data.Map                     as Map
 import           Data.Set                     (isSubsetOf)
 
-import           Halco.CGraph                 (CGraph, CSource (CSource),
-                                               CTfm1 (CTfm1), CTfm2 (CTfm2),
-                                               Env, Semantics)
+import           Halco.CGraph                 (CGraph, COp1 (COp1), COp2 (COp2),
+                                               CSource (CSource), Env,
+                                               Semantics)
 import qualified Halco.CGraph                 as CGraph
 import           Halco.Conts                  (InCont (..), OutCont (..))
 import           Halco.Graph                  (Graph (..), Node (..), NodeId)
@@ -56,15 +56,15 @@ checkTermHelper e g@(Graph m) checked nid
       let state = toState $ CGraph.sources e ! nn & \case CSource o -> o in
       let checked' = check state checked in
       Right (state, checked')
-    Tfm1 nn nid' -> do
-      let CTfm1 i o = CGraph.tfms1 e ! nn
+    Op1 nn nid' -> do
+      let COp1 i o = CGraph.ops1 e ! nn
       (state, checked') <- checkTermHelper e g checked nid'
       state `matchM` i
       let state' = state `update` o
       let checked'' = check state' checked'
       Right (state', checked'')
-    Tfm2 nn nid1 nid2 -> do
-      let CTfm2 i1 i2 o = CGraph.tfms2 e ! nn
+    Op2 nn nid1 nid2 -> do
+      let COp2 i1 i2 o = CGraph.ops2 e ! nn
       (state1, checked') <- checkTermHelper e g checked nid1
       state1 `matchM` i1
       (state2, checked'') <- checkTermHelper e g checked' nid2

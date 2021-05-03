@@ -43,7 +43,7 @@ cgraph = (, semantics) $ Env
     , "species" `ap0` empty
       { attrsO = NewAttrs $ attrs' "species" ["id", "name"] }
     ]
-  , CGraph.tfms1 = m
+  , CGraph.ops1 = m
     [ "petNamesStats"
       `ap1` empty { attrsI = attr "pet.name"
                   , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
@@ -67,7 +67,7 @@ cgraph = (, semantics) $ Env
       `ap1` empty { attrsI = attrs ["pet.age", "person.age"] }
        -->  empty { propsO = prop "sameAge" }
     ]
-  , CGraph.tfms2 = m
+  , CGraph.ops2 = m
     [ "joinPetsFriends"
       `ap2` empty { attrsI = attr "pet.id" }
        <&>  empty { attrsI = attr "friend.petId" }
@@ -96,16 +96,16 @@ graph1 = graph
   , 3 ->> Source "friends"
   , 4 ->> Source "species"
 
-  , 5 ->> Tfm1 "petNamesStats" 1
-  , 6 ->> Tfm1 "priceNames" 9
-  , 7 ->> Tfm1 "nameSpeciesCorrelation" 12
+  , 5 ->> Op1 "petNamesStats" 1
+  , 6 ->> Op1 "priceNames" 9
+  , 7 ->> Op1 "nameSpeciesCorrelation" 12
 
-  , 8 ->> Tfm1 "filterMesozoic" 5
-  , 9 ->> Tfm1 "filterSameAge" 11
+  , 8 ->> Op1 "filterMesozoic" 5
+  , 9 ->> Op1 "filterSameAge" 11
 
-  , 10 ->> Tfm2 "joinPetsFriends" 8 3
-  , 11 ->> Tfm2 "joinPersonsFriends" 2 10
-  , 12 ->> Tfm2 "joinPetsSpecies" 11 4
+  , 10 ->> Op2 "joinPetsFriends" 8 3
+  , 11 ->> Op2 "joinPersonsFriends" 2 10
+  , 12 ->> Op2 "joinPetsSpecies" 11 4
   ]
 
 type E = Map String String
@@ -118,14 +118,14 @@ env' = Env'
     , "friends" ->> friends
     , "species" ->> species
     ]
-  , tfms1 = m
+  , ops1 = m
     [ "petNamesStats" ->> id
     , "priceNames" ->> id
     , "nameSpeciesCorrelation" ->> id
     , "filterMesozoic" ->> pardoNodeP ((< (100500 :: Integer)) . read . (! "pet.age"))
     , "filterSameAge" ->> pardoNodeP (\e -> e ! "person.age" == e ! "pet.age")
     ]
-  , tfms2 = m
+  , ops2 = m
     [ "joinPetsFriends" ->> coReduceNode' (! "pet.id") (! "friend.petId")
     , "joinPersonsFriends" ->> coReduceNode' (! "person.id") (! "friend.personId")
     , "joinPetsSpecies" ->> coReduceNode' (! "pet.speciesId") (! "species.id")

@@ -22,8 +22,8 @@ type SemanticNids = Set NodeId
 
 data Node =
     Source NodeName
-  | Tfm1 NodeName NodeId
-  | Tfm2 NodeName NodeId NodeId
+  | Op1 NodeName NodeId
+  | Op2 NodeName NodeId NodeId
   deriving (Ord, Eq, Show)
 
 newtype Graph = Graph (Map NodeId Node)
@@ -55,8 +55,8 @@ union (Graph m1) (Graph m2) = Graph $ m1 <> m2
 nodeName :: Node -> NodeName
 nodeName = \case
   Source nn   -> nn
-  Tfm1 nn _   -> nn
-  Tfm2 nn _ _ -> nn
+  Op1 nn _   -> nn
+  Op2 nn _ _ -> nn
 
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
@@ -76,8 +76,8 @@ extractPipeline g nids = Map.foldrWithKey f empty $ toMap g
       | nid `Map.member` m' = g'
       | otherwise = m ! nid & Graph . \case
         s@(Source _) -> Map.insert nid s m'
-        t@(Tfm1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
-        t@(Tfm2 _ nid1 nid2) ->
+        t@(Op1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
+        t@(Op2 _ nid1 nid2) ->
           let m1 = toMap $ extractPipeline' g nid1 g' in
           let m2 = toMap $ extractPipeline' g nid2 g' in
           Map.insert nid t $ m1 <> m2
@@ -105,8 +105,8 @@ graph2Dot g name =
   where
     edge2dot :: (NodeId, Node) -> String
     edge2dot (id, Source nn) = ""
-    edge2dot (id, Tfm1 nn nid) = nameLookup nid  ++ " -> " ++ "\"" ++ nn ++ "\""
-    edge2dot (id, Tfm2 nn nid1 nid2) =
+    edge2dot (id, Op1 nn nid) = nameLookup nid  ++ " -> " ++ "\"" ++ nn ++ "\""
+    edge2dot (id, Op2 nn nid1 nid2) =
       let edge1 = nameLookup nid1 ++ " -> " ++ "\"" ++ nn ++ "\"" in
       let edge2 = nameLookup nid2 ++ " -> " ++ "\"" ++ nn ++ "\"" in
       edge1 ++ "\n" ++ edge2

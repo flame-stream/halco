@@ -29,7 +29,7 @@ cgraph = (, semantics) $ Env
     , "backLogs" `ap0` empty
       { attrsO = NewAttrs $ attrs' "back" ["id", "queryId", "userId", "ts", "payload"] }
     ]
-  , CGraph.tfms1 = m
+  , CGraph.ops1 = m
     [ "addFrontFeatures"
       `ap1` empty { attrsI = attr "front.version" }
        -->  empty { attrsO = AddAttrs $ attr "frontFeatures" }
@@ -60,7 +60,7 @@ cgraph = (, semantics) $ Env
                   , propsI = props ["frontsFiltered", "authorizedUsers"] }
        -->  empty { attrsO = delAttrs }
     ]
-  , CGraph.tfms2 = m
+  , CGraph.ops2 = m
     [ "joinByQuery"
       `ap2` empty { attrsI = attr "front.queryId" }
        <&>  empty { attrsI = attr "back.queryId" }

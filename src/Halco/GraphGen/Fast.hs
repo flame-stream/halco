@@ -9,7 +9,7 @@ import           Data.Set                 (Set)
 import qualified Data.Set                 as Set
 import           Data.Tuple.Extra         (fst3)
 
-import           Halco.CGraph             (CGraph, CTfm1 (CTfm1), CTfm2 (CTfm2),
+import           Halco.CGraph             (CGraph, COp1 (COp1), COp2 (COp2),
                                            Env (..))
 import qualified Halco.CGraph             as CGraph
 import           Halco.Conts              (InCont (..), OutCont (..))
@@ -24,9 +24,9 @@ genGraphs (e, s) =
   let nidMax = toInteger $ length sourcesC in
   let states = enumerate $ toState . CGraph.sourceC . snd <$> sourcesC in
   let sources = enumerate $ Source . fst <$> sourcesC in
-  let nTfms = Map.size (CGraph.tfms1 e) + Map.size (CGraph.tfms2 e) in
-  let tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> states) Set.empty in
-  let bigGraph = graph $ sources ++ tfms in
+  let nOps = Map.size (CGraph.ops1 e) + Map.size (CGraph.ops2 e) in
+  let ops = genFromSources nOps e nidMax ((, Set.empty) <$> states) Set.empty in
+  let bigGraph = graph $ sources ++ ops in
   let graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s in
   filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
   where
@@ -45,13 +45,13 @@ genFromSources 0 _ _ _ _ = []
 genFromSources d e nid sources nodes =
   let sources1 = zip
         [nid + 1..]
-        [(tfm, s `update` o, nn `Set.insert` nns)
+        [(op, s `update` o, nn `Set.insert` nns)
           | ((nid, s), nns) <- sources
-          , nn <- Map.keys $ CGraph.tfms1 e
+          , nn <- Map.keys $ CGraph.ops1 e
           , nn `Set.notMember` nns
-          , let tfm = Tfm1 nn nid
-          , tfm `Set.notMember` nodes
-          , let CTfm1 i o = CGraph.tfms1 e ! nn
+          , let op = Op1 nn nid
+          , op `Set.notMember` nodes
+          , let COp1 i o = CGraph.ops1 e ! nn
           , s `match` i]
       nid' = if null sources1
         then nid
@@ -59,16 +59,16 @@ genFromSources d e nid sources nodes =
 
       sources2 = zip
         [nid' + 1..]
-        [(tfm, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
+        [(op, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
           | ((nid1, s1), nns1) <- sources
           , ((nid2, s2), nns2) <- sources
           , nid1 /= nid2
-          , nn <- Map.keys $ CGraph.tfms2 e
+          , nn <- Map.keys $ CGraph.ops2 e
           , nn `Set.notMember` nns1
           , nn `Set.notMember` nns2
-          , let tfm = Tfm2 nn nid1 nid2
-          , tfm `Set.notMember` nodes
-          , let CTfm2 i1 i2 o = CGraph.tfms2 e ! nn
+          , let op = Op2 nn nid1 nid2
+          , op `Set.notMember` nodes
+          , let COp2 i1 i2 o = CGraph.ops2 e ! nn
           , s1 `match` i1
           , s2 `match` i2]
       nid'' = if null sources2

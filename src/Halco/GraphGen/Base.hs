@@ -16,7 +16,7 @@ import           Data.Set                  (Set)
 import qualified Data.Set                  as Set
 import           ListT
 
-import           Halco.CGraph              (CGraph, CTfm1 (..), CTfm2 (..),
+import           Halco.CGraph              (CGraph, COp1 (..), COp2 (..),
                                             Env (..))
 import qualified Halco.CGraph              as CGraph
 import           Halco.Conts
@@ -33,8 +33,8 @@ genGraphs (e, s) =
   let nidMax = toInteger $ length sourcesC in
   let states = enumerate $ toState . CGraph.sourceC . snd <$> sourcesC in
   let sources = enumerate $ Source . fst <$> sourcesC in
-  let tfmsNames = Set.fromList $ Map.keys (CGraph.tfms1 e) <> Map.keys (CGraph.tfms2 e) in
-  let nodes = genFromSources 5 e tfmsNames states in
+  let opsNames = Set.fromList $ Map.keys (CGraph.ops1 e) <> Map.keys (CGraph.ops2 e) in
+  let nodes = genFromSources 5 e opsNames states in
   let bigGraph = graph $ sources ++ StateM.evalState (ListT.toList nodes) nidMax in
   let graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s in
   filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
@@ -52,17 +52,17 @@ genFromSources :: (InCont s i, OutCont s o)
 genFromSources 0 _ _ _ = nilLT
 genFromSources depth e nns sources = do
   nn <- nnsLT
-  case CGraph.tfms1 e !? nn of
-    Just (CTfm1 i o) -> do
+  case CGraph.ops1 e !? nn of
+    Just (COp1 i o) -> do
       (nid, state) <- sourcesLT
       guard $ state `match` i
       updateNid
       nid' <- getNid
-      (nid', Tfm1 nn nid) `cons` genFromSources (depth - 1) e
+      (nid', Op1 nn nid) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
         ((nid', state `update` o) : sources)
-    Nothing -> CGraph.tfms2 e ! nn & \case
-      CTfm2 i1 i2 o -> do
+    Nothing -> CGraph.ops2 e ! nn & \case
+      COp2 i1 i2 o -> do
         (nid1, state1) <- sourcesLT
         (nid2, state2) <- sourcesLT
         guard $ nid1 /= nid2
@@ -70,7 +70,7 @@ genFromSources depth e nns sources = do
               && state2 `match` i2
         updateNid
         nid' <- getNid
-        (nid', Tfm2 nn nid1 nid2) `cons` genFromSources (depth - 1) e
+        (nid', Op2 nn nid1 nid2) `cons` genFromSources (depth - 1) e
           (nn `Set.delete` nns)
           ((nid', (state1 <> state2) `update` o) : sources)
   where
