@@ -27,9 +27,7 @@ library
       Halco.Beam
       Halco.CGraph
       Halco.Check
-      Halco.Conts.Base
-      Halco.Conts.Trivial
-      Halco.Conts.Types
+      Halco.Conts
       Halco.Cost
       Halco.Defs
       Halco.DSL
@@ -39,8 +37,13 @@ library
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
-      Halco.GraphGen.Utils
+      Halco.Pragmatic.Base
       Halco.State
+      Halco.Trivial.Conts
+      Halco.Trivial.Defs
+      Halco.Trivial.DSL
+      Halco.Trivial.State
+      Halco.Utils.Classes
       Halco.Utils.Data.Functor
       Halco.Utils.Data.List
       Halco.Utils.Data.Map

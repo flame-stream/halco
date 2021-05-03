@@ -12,29 +12,31 @@ import           Data.Tuple.Extra         (fst3)
 import           Halco.CGraph             (CGraph, CTfm1 (CTfm1), CTfm2 (CTfm2),
                                            Env (..))
 import qualified Halco.CGraph             as CGraph
-import           Halco.Conts.Types        (ContContext, InCont (..),
-                                           OutCont (..))
+import           Halco.Conts              (InCont (..), OutCont (..))
 import           Halco.Defs               (NodeName)
 import           Halco.Graph              (Graph, Node (..), NodeId, graph)
 import qualified Halco.Graph              as Graph
-import           Halco.GraphGen.Utils     (graphSources)
-import           Halco.State              (State)
 import           Halco.Utils.Data.Functor ((<$$>))
 
-genGraphs :: ContContext a p i o => CGraph i o -> [Graph]
-genGraphs (e, s) = -- TODO q
-  let (q1, q2, nidMax) = graphSources e
-      nTfms = Map.size (CGraph.tfms1 e) + Map.size (CGraph.tfms2 e)
-      tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> q1) Set.empty
-      bigGraph = graph $ q2 ++ tfms
-      graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s
-   in filter Graph.noSameNodes graphs -- Every semantics node also will occur only once.
+genGraphs :: (InCont s i, OutCont s o) => CGraph s i o -> [Graph]
+genGraphs (e, s) =
+  let sourcesC = Map.toList $ CGraph.sources e in
+  let nidMax = toInteger $ length sourcesC in
+  let states = enumerate $ toState . CGraph.sourceC . snd <$> sourcesC in
+  let sources = enumerate $ Source . fst <$> sourcesC in
+  let nTfms = Map.size (CGraph.tfms1 e) + Map.size (CGraph.tfms2 e) in
+  let tfms = genFromSources nTfms e nidMax ((, Set.empty) <$> states) Set.empty in
+  let bigGraph = graph $ sources ++ tfms in
+  let graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s in
+  filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
+  where
+    enumerate = zip [1..]
 
-genFromSources :: ContContext a p i o
+genFromSources :: (InCont s i, OutCont s o)
                => Int                    -- Graph depth.
-               -> Env i o
+               -> Env s i o
                -> NodeId                 -- Maximal used node id.
-               -> [( (NodeId, State a p) -- All available sources to make graph next layer.
+               -> [( (NodeId, s)         -- All available sources to make graph next layer.
                    , Set NodeName )]     -- Particular transformations that were used
                                          -- to make up source.
                -> Set Node               -- Already generated nodes of transformations.

@@ -9,12 +9,15 @@ import qualified Data.Set            as Set
 import           Halco.Beam          (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.CGraph        (CGraph, Env (Env), Semantics)
 import qualified Halco.CGraph        as CGraph
-import           Halco.Conts.Trivial
-import qualified Halco.Conts.Trivial as Trivial
-import           Halco.Conts.Types
+import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
-import           Halco.Graph         (Graph, Node (..), empty, graph)
+import           Halco.Graph         (Graph, Node (..), graph)
+import           Halco.Trivial.Conts
+import qualified Halco.Trivial.Conts as Trivial
+import           Halco.Trivial.DSL
+import           Halco.Trivial.State (State)
+import           Halco.Utils.Classes (Empty (..))
 
 semantics :: Semantics
 semantics = s
@@ -28,57 +31,57 @@ semantics = s
   , "nameSpeciesCorrelation"
   ]
 
-cgraph :: CGraph Trivial.InCont Trivial.OutCont
+cgraph :: CGraph State Trivial.InCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
-    [ "pets"    `ap0` emptyOut
+    [ "pets"    `ap0` empty
       { attrsO = NewAttrs $ attrs' "pet" ["id", "name", "age", "speciesId"] }
-    , "persons" `ap0` emptyOut
+    , "persons" `ap0` empty
       { attrsO = NewAttrs $ attrs' "person" ["id", "name", "age"] }
-    , "friends" `ap0` emptyOut
+    , "friends" `ap0` empty
       { attrsO = NewAttrs $ attrs' "friend" ["personId", "petId"] }
-    , "species" `ap0` emptyOut
+    , "species" `ap0` empty
       { attrsO = NewAttrs $ attrs' "species" ["id", "name"] }
     ]
   , CGraph.tfms1 = m
     [ "petNamesStats"
-      `ap1` emptyIn { attrsI = attr "pet.name"
-                    , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
-       -->  emptyOut
+      `ap1` empty { attrsI = attr "pet.name"
+                  , propsI' = props ["sameAge", "noFromMesozoic"] } -- To consider all pets
+       -->  empty
 
     , "priceNames"
-      `ap1` emptyIn  { attrsI = attrs ["person.name", "pet.name"]
-                     , propsI = props ["sameAge", "noFromMesozoic"] }
-       -->  emptyOut { attrsO = delAttrs }
+      `ap1` empty { attrsI = attrs ["person.name", "pet.name"]
+                  , propsI = props ["sameAge", "noFromMesozoic"] }
+       -->  empty { attrsO = delAttrs }
 
     , "nameSpeciesCorrelation"
-      `ap1` emptyIn  { attrsI = attrs ["person.name", "species.name"]
-                     , propsI = prop "noFromMesozoic" }
-       -->  emptyOut { attrsO = delAttrs }
+      `ap1` empty { attrsI = attrs ["person.name", "species.name"]
+                  , propsI = prop "noFromMesozoic" }
+       -->  empty { attrsO = delAttrs }
 
     , "filterMesozoic"
-      `ap1` emptyIn  { attrsI = attr "pet.age" }
-       -->  emptyOut { propsO = prop "noFromMesozoic" }
+      `ap1` empty { attrsI = attr "pet.age" }
+       -->  empty { propsO = prop "noFromMesozoic" }
 
     , "filterSameAge"
-      `ap1` emptyIn  { attrsI = attrs ["pet.age", "person.age"] }
-       -->  emptyOut { propsO = prop "sameAge" }
+      `ap1` empty { attrsI = attrs ["pet.age", "person.age"] }
+       -->  empty { propsO = prop "sameAge" }
     ]
   , CGraph.tfms2 = m
     [ "joinPetsFriends"
-      `ap2` emptyIn { attrsI = attr "pet.id" }
-       <&>  emptyIn { attrsI = attr "friend.petId" }
-       -->  emptyOut
+      `ap2` empty { attrsI = attr "pet.id" }
+       <&>  empty { attrsI = attr "friend.petId" }
+       -->  empty
 
     , "joinPersonsFriends"
-      `ap2` emptyIn { attrsI = attr "person.id" }
-       <&>  emptyIn { attrsI = attr "friend.personId" }
-       -->  emptyOut
+      `ap2` empty { attrsI = attr "person.id" }
+       <&>  empty { attrsI = attr "friend.personId" }
+       -->  empty
 
     , "joinPetsSpecies"
-      `ap2` emptyIn { attrsI = attr "pet.speciesId" }
-       <&>  emptyIn { attrsI = attr "species.id" }
-       -->  emptyOut
+      `ap2` empty { attrsI = attr "pet.speciesId" }
+       <&>  empty { attrsI = attr "species.id" }
+       -->  empty
     ]
   }
 

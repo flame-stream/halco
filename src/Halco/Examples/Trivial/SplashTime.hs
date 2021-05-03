@@ -4,63 +4,67 @@ module Halco.Examples.Trivial.SplashTime where
 
 import           Data.Map            (Map)
 
+import           Halco.Beam          (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.CGraph        (CGraph, Env (Env), Semantics)
 import qualified Halco.CGraph        as CGraph
-import           Halco.Conts.Trivial
-import qualified Halco.Conts.Trivial as Trivial
-import           Halco.Conts.Types
+import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
-import           Halco.Graph
+import           Halco.Graph         (Graph, Node (..), graph)
+import           Halco.Trivial.Conts
+import qualified Halco.Trivial.Conts as Trivial
+import           Halco.Trivial.DSL
+import           Halco.Trivial.State (State)
+import           Halco.Utils.Classes (Empty (..))
 
 semantics :: Semantics
 semantics = s ["stats"]
 
-cgraph :: CGraph Trivial.InCont Trivial.OutCont
+cgraph :: CGraph State Trivial.InCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
-    [ "frontLogs" `ap0` emptyOut
+    [ "frontLogs" `ap0` empty
       { attrsO = NewAttrs $ attrs' "front" ["id", "version", "queryId", "userId", "ts"] }
 
-    , "backLogs" `ap0` emptyOut
+    , "backLogs" `ap0` empty
       { attrsO = NewAttrs $ attrs' "back" ["id", "queryId", "userId", "ts", "payload"] }
     ]
   , CGraph.tfms1 = m
     [ "addFrontFeatures"
-      `ap1` emptyIn  { attrsI = attr "front.version" }
-       -->  emptyOut { attrsO = AddAttrs $ attr "frontFeatures" }
+      `ap1` empty { attrsI = attr "front.version" }
+       -->  empty { attrsO = AddAttrs $ attr "frontFeatures" }
 
     , "addUserFeatures"
-      `ap1` emptyIn  { attrsI  = attr "front.userId"
-                     , propsI' = prop "authorizedUsers" }
-       -->  emptyOut { attrsO  = AddAttrs $ attr "userFeatures" }
+      `ap1` empty { attrsI  = attr "front.userId"
+                  , propsI' = prop "authorizedUsers" }
+       -->  empty { attrsO  = AddAttrs $ attr "userFeatures" }
 
     , "setSessionTrigger"
-      `ap1` emptyIn  { attrsI  = attrs [ "front.userId", "frontFeatures"
-                                       , "userFeatures", "front.ts", "back.ts"]
-                     , propsI  = prop "frontsFiltered"
-                     , propsI' = prop "authorizedUsers" }
-       -->  emptyOut { attrsO  = AddAttrs $ attr "sessionEnd" }
+      `ap1` empty { attrsI  = attrs [ "front.userId", "frontFeatures"
+                                    , "userFeatures", "front.ts", "back.ts"]
+                  , propsI  = prop "frontsFiltered"
+                  , propsI' = prop "authorizedUsers" }
+       -->  empty { attrsO  = AddAttrs $ attr "sessionEnd" }
 
     , "filterUsers"
-      `ap1` emptyIn  { attrsI = attr "userFeatures" }
-       -->  emptyOut { propsO = prop "authorizedUsers" }
+      `ap1` empty { attrsI = attr "userFeatures" }
+       -->  empty { propsO = prop "authorizedUsers" }
 
     , "filterFronts"
-      `ap1` emptyIn  { attrsI = attr "front.version" }
-       -->  emptyOut { propsO = prop "frontsFiltered" }
+      `ap1` empty { attrsI = attr "front.version" }
+       -->  empty { propsO = prop "frontsFiltered" }
 
     , "stats"
-      `ap1` emptyIn  { attrsI = attrs [ "front.userId", "front.ts", "back.ts"
-                                      , "back.payload", "sessionEnd"]
-                     , propsI = props ["frontsFiltered", "authorizedUsers"] }
-       -->  emptyOut { attrsO = delAttrs }
+      `ap1` empty { attrsI = attrs [ "front.userId", "front.ts", "back.ts"
+                                   , "back.payload", "sessionEnd"]
+                  , propsI = props ["frontsFiltered", "authorizedUsers"] }
+       -->  empty { attrsO = delAttrs }
     ]
   , CGraph.tfms2 = m
     [ "joinByQuery"
-      `ap2` emptyIn  { attrsI = attr "front.queryId" }
-       <&>  emptyIn  { attrsI = attr "back.queryId" }
-       -->  emptyOut { propsO = prop "joinedByUserQuery" }  -- TODO join property
+      `ap2` empty { attrsI = attr "front.queryId" }
+       <&>  empty { attrsI = attr "back.queryId" }
+       -->  empty { propsO = prop "joinedByUserQuery" }  -- TODO join property
     ]
   }
 

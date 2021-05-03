@@ -9,9 +9,9 @@ import           Test.Hspec
 
 import           Halco.CGraph
 import           Halco.Check
-import           Halco.Conts.Types
+import           Halco.Conts
 import           Halco.Defs
-import qualified Halco.Examples.Pets as Pets
+import qualified Halco.Examples.Trivial.Pets as Pets
 import           Halco.Graph
 import           Halco.GraphGen.Fast
 
@@ -20,7 +20,7 @@ main = hspec $ do
   testPets
   testFastGeneration
 
-checkGraph' :: ContContext a p i o => CGraph i o -> Graph -> Bool
+checkGraph' :: (InCont s i, OutCont s o) => CGraph s i o -> Graph -> Bool
 checkGraph' c = isRight . checkGraph c
 
 testPets :: Spec
