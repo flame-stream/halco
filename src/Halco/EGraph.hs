@@ -19,6 +19,7 @@ data Env' e = Env'
   }
 
 newtype EGraph e = EGraph (Map NodeName (ESource e))
+  deriving (Show)
 
 toMap :: EGraph e -> Map NodeName (ESource e)
 toMap (EGraph m) = m

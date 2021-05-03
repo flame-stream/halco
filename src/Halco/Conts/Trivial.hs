@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase   #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Halco.Conts.Impl where
+module Halco.Conts.Trivial where
 
 import           Data.Set          (Set, (\\))
 import qualified Data.Set          as Set

@@ -27,14 +27,15 @@ library
       Halco.Beam
       Halco.CGraph
       Halco.Check
-      Halco.Conts.Impl
+      Halco.Conts.Base
+      Halco.Conts.Trivial
       Halco.Conts.Types
       Halco.Cost
       Halco.Defs
       Halco.DSL
       Halco.EGraph
-      Halco.Examples.Pets
-      Halco.Examples.SplashTime
+      Halco.Examples.Trivial.Pets
+      Halco.Examples.Trivial.SplashTime
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast

@@ -1,13 +1,13 @@
 {-# LANGUAGE TupleSections #-}
 
-module Halco.Examples.SplashTime where
+module Halco.Examples.Trivial.SplashTime where
 
-import           Data.Map          (Map)
+import           Data.Map            (Map)
 
-import           Halco.CGraph      (CGraph, Env (Env), Semantics)
-import qualified Halco.CGraph      as CGraph
-import           Halco.Conts.Impl
-import qualified Halco.Conts.Impl  as Impl
+import           Halco.CGraph        (CGraph, Env (Env), Semantics)
+import qualified Halco.CGraph        as CGraph
+import           Halco.Conts.Trivial
+import qualified Halco.Conts.Trivial as Trivial
 import           Halco.Conts.Types
 import           Halco.DSL
 import           Halco.EGraph
@@ -16,7 +16,7 @@ import           Halco.Graph
 semantics :: Semantics
 semantics = s ["stats"]
 
-cgraph :: CGraph Impl.InCont Impl.OutCont
+cgraph :: CGraph Trivial.InCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "frontLogs" `ap0` emptyOut

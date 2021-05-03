@@ -1,20 +1,20 @@
 {-# LANGUAGE TupleSections #-}
 
-module Halco.Examples.Pets where
+module Halco.Examples.Trivial.Pets where
 
-import           Data.Map          (Map, (!))
-import qualified Data.Map          as Map
-import qualified Data.Set          as Set
+import           Data.Map            (Map, (!))
+import qualified Data.Map            as Map
+import qualified Data.Set            as Set
 
-import           Halco.Beam        (coReduceNode', pardoNodeP, reduceNode)
-import           Halco.CGraph      (CGraph, Env (Env), Semantics)
-import qualified Halco.CGraph      as CGraph
-import           Halco.Conts.Impl
-import qualified Halco.Conts.Impl  as Impl
+import           Halco.Beam          (coReduceNode', pardoNodeP, reduceNode)
+import           Halco.CGraph        (CGraph, Env (Env), Semantics)
+import qualified Halco.CGraph        as CGraph
+import           Halco.Conts.Trivial
+import qualified Halco.Conts.Trivial as Trivial
 import           Halco.Conts.Types
 import           Halco.DSL
 import           Halco.EGraph
-import           Halco.Graph       (Graph, Node (..), empty, graph)
+import           Halco.Graph         (Graph, Node (..), empty, graph)
 
 semantics :: Semantics
 semantics = s
@@ -28,7 +28,7 @@ semantics = s
   , "nameSpeciesCorrelation"
   ]
 
-cgraph :: CGraph Impl.InCont Impl.OutCont
+cgraph :: CGraph Trivial.InCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "pets"    `ap0` emptyOut

@@ -1,16 +1,16 @@
 module Halco.DSL where
 
-import           Data.Map          (Map)
-import qualified Data.Map          as Map
-import           Data.Set          (Set)
-import qualified Data.Set          as Set
+import           Data.Map            (Map)
+import qualified Data.Map            as Map
+import           Data.Set            (Set)
+import qualified Data.Set            as Set
 
-import           Halco.CGraph      (CSource (CSource), CTfm1 (CTfm1),
-                                    CTfm2 (CTfm2))
-import           Halco.Conts.Impl  (Attr (..), OutAttrs (NewAttrs), Prop (..))
-import           Halco.Conts.Types (InCont, OutCont)
-import           Halco.Defs        (NodeName)
-import           Halco.Graph       (Node, NodeId)
+import           Halco.CGraph        (CSource (CSource), CTfm1 (CTfm1),
+                                      CTfm2 (CTfm2))
+import           Halco.Conts.Trivial (Attr (..), OutAttrs (NewAttrs), Prop (..))
+import           Halco.Conts.Types   (InCont, OutCont)
+import           Halco.Defs          (NodeName)
+import           Halco.Graph         (Node, NodeId)
 
 attr :: NodeName -> Set Attr
 attr = Set.singleton . Attr
