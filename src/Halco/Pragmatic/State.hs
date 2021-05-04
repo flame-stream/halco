@@ -9,11 +9,12 @@ import           Halco.Pragmatic.Defs (Attr, OpaqueProp)
 import qualified Halco.State          as S
 import           Halco.Utils.Classes  (Empty (..))
 
-data State = State
-  { attrs :: Set Attr       -- Attributes of the stream elements
-  , mods  :: Set OpaqueProp -- Modifications applied to the stream
-  , props :: Set OpaqueProp --
-  }
+data State =
+    State
+    { attrs :: Set Attr       -- Attributes of the stream elements
+    , mods  :: Set OpaqueProp -- Modifications applied to the stream
+    , props :: Set OpaqueProp --
+    }
+  | BatchState
+    {}
   deriving (Show, Eq, Ord)
-
-
