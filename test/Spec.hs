@@ -20,7 +20,8 @@ main = hspec $ do
   testPets
   testFastGeneration
 
-checkGraph' :: (InCont s i, OutCont s o) => CGraph s i o -> Graph -> Bool
+checkGraph' :: ContsContext s i o o1 o2
+            => CGraph s i o o1 o2 -> Graph -> Bool
 checkGraph' c = isRight . checkGraph c
 
 testPets :: Spec

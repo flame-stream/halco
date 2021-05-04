@@ -27,7 +27,7 @@ import qualified Halco.Graph               as Graph
 import           Halco.Utils.ListT         (nilLT)
 
 -- Very slow exponential algorithm, do not use it!
-genGraphs :: (InCont s i, OutCont s o) => CGraph s i o -> [Graph]
+genGraphs :: ContsContext s i o o1 o2 => CGraph s i o o1 o2 -> [Graph]
 genGraphs (e, s) =
   let sourcesC = Map.toList $ CGraph.sources e in
   let nidMax = toInteger $ length sourcesC in
@@ -41,9 +41,9 @@ genGraphs (e, s) =
   where
     enumerate = zip [1..]
 
-genFromSources :: (InCont s i, OutCont s o)
+genFromSources :: ContsContext s i o o1 o2
                => Int                     -- Depth of the graph to generate.
-               -> Env s i o
+               -> Env s i o o1 o2
                -> Set NodeName            -- Available transformations to use in graph.
                -> [(NodeId, s)]
                -> ListT
@@ -60,7 +60,7 @@ genFromSources depth e nns sources = do
       nid' <- getNid
       (nid', Op1 nn nid) `cons` genFromSources (depth - 1) e
         (nn `Set.delete` nns)
-        ((nid', state `update` o) : sources)
+        ((nid', state `update1` o) : sources)
     Nothing -> CGraph.ops2 e ! nn & \case
       COp2 i1 i2 o -> do
         (nid1, state1) <- sourcesLT
@@ -72,7 +72,7 @@ genFromSources depth e nns sources = do
         nid' <- getNid
         (nid', Op2 nn nid1 nid2) `cons` genFromSources (depth - 1) e
           (nn `Set.delete` nns)
-          ((nid', (state1 <> state2) `update` o) : sources)
+          ((nid', (state1, state2) `update2` o) : sources)
   where
     getNid = lift StateM.get
     updateNid = lift $ StateM.modify (+ 1)

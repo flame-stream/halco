@@ -51,5 +51,11 @@ instance Empty OutCont where
                   , propsO' = Set.empty }
 
 instance Conts.OutCont State OutCont where
-  update s o = State { attrs = updateAttrs s $ attrsO o
-                     , props = propsO o <> (props s \\ propsO' o) }
+  toState = Conts.update1 empty
+
+instance Conts.OutCont1 State OutCont where
+  update1 s o = State { attrs = updateAttrs s $ attrsO o
+                      , props = propsO o <> (props s \\ propsO' o) }
+
+instance Conts.OutCont2 State OutCont where
+  update2 (s1, s2) = Conts.update1 (s1 <> s2)

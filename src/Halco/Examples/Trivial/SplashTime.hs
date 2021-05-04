@@ -4,9 +4,9 @@ module Halco.Examples.Trivial.SplashTime where
 
 import           Data.Map            (Map)
 
-import           Halco.Beam          (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.CGraph        (CGraph, Env (Env), Semantics)
 import qualified Halco.CGraph        as CGraph
+import           Halco.Combs         (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
@@ -20,7 +20,7 @@ import           Halco.Utils.Classes (Empty (..))
 semantics :: Semantics
 semantics = s ["stats"]
 
-cgraph :: CGraph State Trivial.InCont Trivial.OutCont
+cgraph :: CGraph State Trivial.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "frontLogs" `ap0` empty

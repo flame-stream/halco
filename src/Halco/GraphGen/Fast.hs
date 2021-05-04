@@ -12,13 +12,15 @@ import           Data.Tuple.Extra         (fst3)
 import           Halco.CGraph             (CGraph, COp1 (COp1), COp2 (COp2),
                                            Env (..))
 import qualified Halco.CGraph             as CGraph
-import           Halco.Conts              (InCont (..), OutCont (..))
+import           Halco.Conts              (ContsContext, InCont (..),
+                                           OutCont (..), OutCont1 (..),
+                                           OutCont2 (..))
 import           Halco.Defs               (NodeName)
 import           Halco.Graph              (Graph, Node (..), NodeId, graph)
 import qualified Halco.Graph              as Graph
 import           Halco.Utils.Data.Functor ((<$$>))
 
-genGraphs :: (InCont s i, OutCont s o) => CGraph s i o -> [Graph]
+genGraphs :: ContsContext s i o o1 o2 => CGraph s i o o1 o2 -> [Graph]
 genGraphs (e, s) =
   let sourcesC = Map.toList $ CGraph.sources e in
   let nidMax = toInteger $ length sourcesC in
@@ -32,9 +34,9 @@ genGraphs (e, s) =
   where
     enumerate = zip [1..]
 
-genFromSources :: (InCont s i, OutCont s o)
+genFromSources :: ContsContext s i o o1 o2
                => Int                -- Graph depth.
-               -> Env s i o
+               -> Env s i o o1 o2
                -> NodeId             -- Maximal used node id.
                -> [( (NodeId, s)     -- All available sources to make graph next layer.
                    , Set NodeName )] -- Particular transformations that were used
@@ -45,7 +47,7 @@ genFromSources 0 _ _ _ _ = []
 genFromSources d e nid sources nodes =
   let sources1 = zip
         [nid + 1..]
-        [(op, s `update` o, nn `Set.insert` nns)
+        [(op, s `update1` o, nn `Set.insert` nns)
           | ((nid, s), nns) <- sources
           , nn <- Map.keys $ CGraph.ops1 e
           , nn `Set.notMember` nns
@@ -59,7 +61,7 @@ genFromSources d e nid sources nodes =
 
   let sources2 = zip
         [nid' + 1..]
-        [(op, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
+        [(op, (s1, s2) `update2` o, nn `Set.insert` (nns1 <> nns2))
           | ((nid1, s1), nns1) <- sources
           , ((nid2, s2), nns2) <- sources
           , nid1 /= nid2

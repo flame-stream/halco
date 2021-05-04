@@ -54,7 +54,7 @@ union (Graph m1) (Graph m2) = Graph $ m1 <> m2
 
 nodeName :: Node -> NodeName
 nodeName = \case
-  Source nn   -> nn
+  Source nn  -> nn
   Op1 nn _   -> nn
   Op2 nn _ _ -> nn
 

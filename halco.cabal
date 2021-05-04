@@ -27,6 +27,7 @@ library
       Halco.Beam
       Halco.CGraph
       Halco.Check
+      Halco.Combs
       Halco.Conts
       Halco.Cost
       Halco.Defs
@@ -38,6 +39,10 @@ library
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
       Halco.Pragmatic.Conts
+      Halco.Pragmatic.Defs
+      Halco.Pragmatic.DSL
+      Halco.Pragmatic.Ops
+      Halco.Pragmatic.State
       Halco.State
       Halco.Trivial.Conts
       Halco.Trivial.Defs

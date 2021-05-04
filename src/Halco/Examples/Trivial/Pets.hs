@@ -6,9 +6,9 @@ import           Data.Map            (Map, (!))
 import qualified Data.Map            as Map
 import qualified Data.Set            as Set
 
-import           Halco.Beam          (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.CGraph        (CGraph, Env (Env), Semantics)
 import qualified Halco.CGraph        as CGraph
+import           Halco.Combs         (coReduceNode', pardoNodeP, reduceNode)
 import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
@@ -31,7 +31,7 @@ semantics = s
   , "nameSpeciesCorrelation"
   ]
 
-cgraph :: CGraph State Trivial.InCont Trivial.OutCont
+cgraph :: CGraph State Trivial.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "pets"    `ap0` empty
