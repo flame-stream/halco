@@ -1,4 +1,4 @@
-module Halco.Pragmatic.Base where
+module Halco.Pragmatic.Conts where
 
 -- import           Data.Map          (Map)
 -- import qualified Data.Map          as Map

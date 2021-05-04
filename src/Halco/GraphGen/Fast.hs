@@ -33,14 +33,14 @@ genGraphs (e, s) =
     enumerate = zip [1..]
 
 genFromSources :: (InCont s i, OutCont s o)
-               => Int                    -- Graph depth.
+               => Int                -- Graph depth.
                -> Env s i o
-               -> NodeId                 -- Maximal used node id.
-               -> [( (NodeId, s)         -- All available sources to make graph next layer.
-                   , Set NodeName )]     -- Particular transformations that were used
-                                         -- to make up source.
-               -> Set Node               -- Already generated nodes of transformations.
-               -> [(NodeId, Node)]       -- nodes of the all possible graphs with the given depth.
+               -> NodeId             -- Maximal used node id.
+               -> [( (NodeId, s)     -- All available sources to make graph next layer.
+                   , Set NodeName )] -- Particular transformations that were used
+                                     -- to make up source.
+               -> Set Node           -- Already generated nodes of transformations.
+               -> [(NodeId, Node)]   -- nodes of the all possible graphs with the given depth.
 genFromSources 0 _ _ _ _ = []
 genFromSources d e nid sources nodes =
   let sources1 = zip
@@ -52,12 +52,12 @@ genFromSources d e nid sources nodes =
           , let op = Op1 nn nid
           , op `Set.notMember` nodes
           , let COp1 i o = CGraph.ops1 e ! nn
-          , s `match` i]
-      nid' = if null sources1
+          , s `match` i] in
+  let nid' = if null sources1
         then nid
-        else fst $ last sources1
+        else fst $ last sources1 in
 
-      sources2 = zip
+  let sources2 = zip
         [nid' + 1..]
         [(op, (s1 <> s2) `update` o, nn `Set.insert` (nns1 <> nns2))
           | ((nid1, s1), nns1) <- sources
@@ -70,15 +70,15 @@ genFromSources d e nid sources nodes =
           , op `Set.notMember` nodes
           , let COp2 i1 i2 o = CGraph.ops2 e ! nn
           , s1 `match` i1
-          , s2 `match` i2]
-      nid'' = if null sources2
+          , s2 `match` i2] in
+  let nid'' = if null sources2
         then nid'
-        else fst $ last sources2
+        else fst $ last sources2 in
 
-      nodes1 = fst3 <$$> sources1
-      nodes2 = fst3 <$$> sources2
-      sources' = sources ++ (toSource <$> sources1) ++ (toSource <$> sources2)
-      nodes' = nodes <> Set.fromList (snd <$> nodes1) <> Set.fromList (snd <$> nodes2)
-   in nodes1 ++ nodes2 ++ genFromSources (d - 1) e nid'' sources' nodes'
+  let nodes1 = fst3 <$$> sources1 in
+  let nodes2 = fst3 <$$> sources2 in
+  let sources' = sources ++ (toSource <$> sources1) ++ (toSource <$> sources2) in
+  let nodes' = nodes <> Set.fromList (snd <$> nodes1) <> Set.fromList (snd <$> nodes2) in
+  nodes1 ++ nodes2 ++ genFromSources (d - 1) e nid'' sources' nodes'
   where
     toSource (nid, (t, s, nns)) = ((nid, s), nns)

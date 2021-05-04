@@ -37,7 +37,7 @@ library
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
-      Halco.Pragmatic.Base
+      Halco.Pragmatic.Conts
       Halco.State
       Halco.Trivial.Conts
       Halco.Trivial.Defs

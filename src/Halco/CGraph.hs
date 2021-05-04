@@ -24,8 +24,8 @@ data COp2 s i o where
 data Env s i o where
   Env :: (InCont s i, OutCont s o)
       => { sources :: Map NodeName (CSource s o)
-         , ops1   :: Map NodeName (COp1 s i o)
-         , ops2   :: Map NodeName (COp2 s i o)
+         , ops1    :: Map NodeName (COp1 s i o)
+         , ops2    :: Map NodeName (COp2 s i o)
          }
       -> Env s i o
 
