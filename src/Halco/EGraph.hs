@@ -8,15 +8,14 @@ import           Halco.Graph (Graph (Graph), Node (..), NodeId)
 import qualified Halco.Graph as Graph
 
 type ESource e = [e]
-type EOp1 e = ESource e -> ESource e
-type EOp2 e = ESource e -> ESource e -> ESource e
+type EOp1 e = [e] -> [e]
+type EOp2 e = [e] -> [e] -> [e]
 
 -- Element types should be the same to be able to permute nodes
 data Env' e = Env'
   { sources :: Map NodeName (ESource e)
   , ops1    :: Map NodeName (EOp1 e)
-  , ops2    :: Map NodeName (EOp2 e)
-  }
+  , ops2    :: Map NodeName (EOp2 e) }
 
 newtype EGraph e = EGraph (Map NodeName (ESource e))
   deriving (Show)

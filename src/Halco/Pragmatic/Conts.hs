@@ -20,11 +20,6 @@ module Halco.Pragmatic.Conts where
 -- data AttrRelation = AttrRelation PropName (Attr, Attr)
 --   deriving (Show, Ord, Eq)
 
--- data InCont = InCont
---   { attrProps :: Map Attr AttrProps
---   , relProps  :: Set AttrRelation }
---   deriving (Show)
-
 -- data OutCont = OutCont
 --   {}
 --   { attrsO :: () -- TODO

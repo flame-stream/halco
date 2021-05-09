@@ -6,17 +6,17 @@ import           Control.Monad               (forM_)
 import           Data.Map                    ((!))
 
 import           Halco.EGraph
-import           Halco.Examples.Trivial.Pets
+import           Halco.Examples.Trivials.Poster
 import           Halco.Graph                 (graph2Dot)
 import           Halco.GraphGen.Fast
 
 main :: IO ()
 main = do
-  let graph = head $ genGraphs cgraph
-  let res = eval graph env'
-  print graph
-  putStrLn ""
-  putStrLn $ "Result: " <> show res
+  -- let graph = head $ genGraphs cgraph
+  -- let res = eval graph env'
+  -- print graph
+  putStrLn $ "Length: " <> show (length $ genGraphs cgraph)
+  -- putStrLn $ "Result: " <> show res
   -- putStrLn ""
   -- putStrLn $ "petNamesStats: " <> show (res ! "petNamesStats")
   -- putStrLn ""

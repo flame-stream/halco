@@ -25,6 +25,10 @@ source-repository head
 library
   exposed-modules:
       Halco.Beam
+      Halco.Beam.Conts
+      Halco.Beam.Defs
+      Halco.Beam.Ops
+      Halco.Beam.State
       Halco.CGraph
       Halco.Check
       Halco.Combs
@@ -35,6 +39,7 @@ library
       Halco.EGraph
       Halco.Examples.Trivial.Pets
       Halco.Examples.Trivial.SplashTime
+      Halco.Examples.Trivials.Poster
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
@@ -48,6 +53,7 @@ library
       Halco.Trivial.Defs
       Halco.Trivial.DSL
       Halco.Trivial.State
+      Halco.Trivials.Conts
       Halco.Utils.Classes
       Halco.Utils.Data.Functor
       Halco.Utils.Data.List
