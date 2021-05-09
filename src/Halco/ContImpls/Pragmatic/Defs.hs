@@ -1,4 +1,4 @@
-module Halco.Pragmatic.Defs where
+module Halco.ContImpls.Pragmatic.Defs where
 
 type AttrName = String
 newtype Attr = Attr AttrName

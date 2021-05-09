@@ -1,8 +1,8 @@
-module Halco.Beam.Conts where
+module Halco.ContImpls.Beam.Conts where
 
-import           Data.Map        (Map)
+import           Data.Map                  (Map)
 
-import           Halco.Beam.Defs (Attr, Batch, Props)
+import           Halco.ContImpls.Beam.Defs (Attr, Batch, Props)
 
 data InMode = Process | Filter
 

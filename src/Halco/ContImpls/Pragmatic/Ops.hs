@@ -1,4 +1,4 @@
-module Halco.Pragmatic.Ops where
+module Halco.ContImpls.Pragmatic.Ops where
 
 -- TODO
 

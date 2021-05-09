@@ -1,11 +1,11 @@
-module Halco.Trivial.DSL where
+module Halco.ContImpls.Trivial.DSL where
 
-import           Data.Set            (Set)
-import qualified Data.Set            as Set
+import           Data.Set                      (Set)
+import qualified Data.Set                      as Set
 
-import           Halco.Defs          (NodeName)
-import           Halco.Trivial.Conts (OutAttrs (NewAttrs))
-import           Halco.Trivial.Defs  (Attr (..), Prop (..))
+import           Halco.ContImpls.Trivial.Conts (OutAttrs (NewAttrs))
+import           Halco.ContImpls.Trivial.Defs  (Attr (..), Prop (..))
+import           Halco.Defs                    (NodeName)
 
 attr :: NodeName -> Set Attr
 attr = Set.singleton . Attr

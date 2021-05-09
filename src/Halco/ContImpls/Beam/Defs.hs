@@ -1,4 +1,4 @@
-module Halco.Beam.Defs where
+module Halco.ContImpls.Beam.Defs where
 
 import           Data.Set (Set)
 

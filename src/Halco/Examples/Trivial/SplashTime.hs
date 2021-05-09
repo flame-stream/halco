@@ -2,20 +2,21 @@
 
 module Halco.Examples.Trivial.SplashTime where
 
-import           Data.Map            (Map)
+import           Data.Map                      (Map)
 
-import           Halco.CGraph        (CGraph, Env (Env), Semantics)
-import qualified Halco.CGraph        as CGraph
-import           Halco.Combs         (coReduceNode', pardoNodeP, reduceNode)
+import           Halco.CGraph                  (CGraph, Env (Env), Semantics)
+import qualified Halco.CGraph                  as CGraph
+import           Halco.Combs                   (coReduceNode', pardoNodeP,
+                                                reduceNode)
+import           Halco.ContImpls.Trivial.Conts
+import qualified Halco.ContImpls.Trivial.Conts as Trivial
+import           Halco.ContImpls.Trivial.DSL
+import           Halco.ContImpls.Trivial.State (State)
 import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
-import           Halco.Graph         (Graph, Node (..), graph)
-import           Halco.Trivial.Conts
-import qualified Halco.Trivial.Conts as Trivial
-import           Halco.Trivial.DSL
-import           Halco.Trivial.State (State)
-import           Halco.Utils.Classes (Empty (..))
+import           Halco.Graph                   (Graph, Node (..), graph)
+import           Halco.Utils.Classes           (Empty (..))
 
 semantics :: Semantics
 semantics = s ["stats"]

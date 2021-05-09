@@ -1,4 +1,4 @@
-module Halco.Trivial.Defs where
+module Halco.ContImpls.Trivial.Defs where
 
 type AttrName = String
 newtype Attr = Attr String

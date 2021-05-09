@@ -25,13 +25,23 @@ source-repository head
 library
   exposed-modules:
       Halco.Beam
-      Halco.Beam.Conts
-      Halco.Beam.Defs
-      Halco.Beam.Ops
-      Halco.Beam.State
       Halco.CGraph
       Halco.Check
       Halco.Combs
+      Halco.ContImpls.Beam.Conts
+      Halco.ContImpls.Beam.Defs
+      Halco.ContImpls.Beam.Ops
+      Halco.ContImpls.Beam.State
+      Halco.ContImpls.Pragmatic.Conts
+      Halco.ContImpls.Pragmatic.Defs
+      Halco.ContImpls.Pragmatic.DSL
+      Halco.ContImpls.Pragmatic.Ops
+      Halco.ContImpls.Pragmatic.State
+      Halco.ContImpls.Trivial.Conts
+      Halco.ContImpls.Trivial.Defs
+      Halco.ContImpls.Trivial.DSL
+      Halco.ContImpls.Trivial.State
+      Halco.ContImpls.Trivials.Conts
       Halco.Conts
       Halco.Cost
       Halco.Defs
@@ -43,17 +53,7 @@ library
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
-      Halco.Pragmatic.Conts
-      Halco.Pragmatic.Defs
-      Halco.Pragmatic.DSL
-      Halco.Pragmatic.Ops
-      Halco.Pragmatic.State
       Halco.State
-      Halco.Trivial.Conts
-      Halco.Trivial.Defs
-      Halco.Trivial.DSL
-      Halco.Trivial.State
-      Halco.Trivials.Conts
       Halco.Utils.Classes
       Halco.Utils.Data.Functor
       Halco.Utils.Data.List

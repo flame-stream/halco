@@ -1,14 +1,14 @@
 {-# LANGUAGE DeriveAnyClass     #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Halco.Trivial.State where
+module Halco.ContImpls.Trivial.State where
 
-import           Data.Set            (Set)
-import qualified Data.Set            as Set
+import           Data.Set                     (Set)
+import qualified Data.Set                     as Set
 
-import qualified Halco.State         as S
-import           Halco.Trivial.Defs  (Attr, Prop)
-import           Halco.Utils.Classes (Empty (..))
+import           Halco.ContImpls.Trivial.Defs (Attr, Prop)
+import qualified Halco.State                  as S
+import           Halco.Utils.Classes          (Empty (..))
 
 -- Sorts of information about the dataflow:
 -- attributes that are available on each dataflow element;

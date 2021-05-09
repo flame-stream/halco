@@ -1,15 +1,15 @@
 {-# LANGUAGE LambdaCase            #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Halco.Trivial.Conts where
+module Halco.ContImpls.Trivial.Conts where
 
-import           Data.Set            (Set, (\\))
-import qualified Data.Set            as Set
+import           Data.Set                      (Set, (\\))
+import qualified Data.Set                      as Set
 
-import qualified Halco.Conts         as Conts
-import           Halco.Trivial.Defs  (Attr, Prop)
-import           Halco.Trivial.State (State (..))
-import           Halco.Utils.Classes (Empty (..))
+import           Halco.ContImpls.Trivial.Defs  (Attr, Prop)
+import           Halco.ContImpls.Trivial.State (State (..))
+import qualified Halco.Conts                   as Conts
+import           Halco.Utils.Classes           (Empty (..))
 
 data InCont = InCont
   { attrsI  :: Set Attr -- Required attributes
