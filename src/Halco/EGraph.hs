@@ -17,6 +17,7 @@ data Env' e = Env'
   , ops1    :: Map NodeName (EOp1 e)
   , ops2    :: Map NodeName (EOp2 e) }
 
+-- Evaluated graph
 newtype EGraph e = EGraph (Map NodeName (ESource e))
   deriving (Show)
 

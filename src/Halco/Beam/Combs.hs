@@ -1,10 +1,7 @@
-module Halco.Combs where
+module Halco.Beam.Combs where
 
-import           Halco.Beam   (coGroupByKey, combineValues, groupBy, pardo)
-import           Halco.EGraph (EOp1, EOp2, ESource)
-
--- Combinators that produce nodes with ability
--- to permute for computational graph
+import           Halco.Beam.Base (coGroupByKey, combineValues, groupBy, pardo)
+import           Halco.EGraph    (EOp1, EOp2, ESource)
 
 pardoNode :: (e -> [e]) -> EOp1 e
 pardoNode = pardo

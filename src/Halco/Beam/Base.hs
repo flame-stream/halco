@@ -1,6 +1,6 @@
 {-# LANGUAGE GADTs #-}
 
-module Halco.Beam where
+module Halco.Beam.Base where
 
 import           Data.Map                 (Map)
 import qualified Data.Map                 as Map

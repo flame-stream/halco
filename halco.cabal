@@ -24,10 +24,10 @@ source-repository head
 
 library
   exposed-modules:
-      Halco.Beam
+      Halco.Beam.Base
+      Halco.Beam.Combs
       Halco.CGraph
       Halco.Check
-      Halco.Combs
       Halco.ContImpls.Beam.Conts
       Halco.ContImpls.Beam.Defs
       Halco.ContImpls.Beam.Ops

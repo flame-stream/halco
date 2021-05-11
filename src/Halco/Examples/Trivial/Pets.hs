@@ -6,10 +6,10 @@ import           Data.Map                      (Map, (!))
 import qualified Data.Map                      as Map
 import qualified Data.Set                      as Set
 
+import           Halco.Beam.Combs              (coReduceNode', pardoNodeP,
+                                                reduceNode)
 import           Halco.CGraph                  (CGraph, Env (Env), Semantics)
 import qualified Halco.CGraph                  as CGraph
-import           Halco.Combs                   (coReduceNode', pardoNodeP,
-                                                reduceNode)
 import           Halco.ContImpls.Trivial.Conts
 import qualified Halco.ContImpls.Trivial.Conts as Trivial
 import           Halco.ContImpls.Trivial.DSL

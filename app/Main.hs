@@ -2,12 +2,12 @@
 
 module Main where
 
-import           Control.Monad               (forM_)
-import           Data.Map                    ((!))
+import           Control.Monad                  (forM_)
+import           Data.Map                       ((!))
 
 import           Halco.EGraph
 import           Halco.Examples.Trivials.Poster
-import           Halco.Graph                 (graph2Dot)
+import           Halco.Graph                    (graph2Dot)
 import           Halco.GraphGen.Fast
 
 main :: IO ()

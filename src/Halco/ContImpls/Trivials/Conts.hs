@@ -11,7 +11,7 @@ import qualified Halco.Conts                   as Conts
 newtype InCont = InCont [Trivial.InCont]
 
 instance Empty InCont where
-  empty = InCont []
+  empty = InCont [empty]
 
 instance Conts.InCont State InCont where
   match s (InCont is) = any (Conts.match s) is

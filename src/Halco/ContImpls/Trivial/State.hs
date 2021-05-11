@@ -10,7 +10,7 @@ import           Halco.ContImpls.Trivial.Defs (Attr, Prop)
 import qualified Halco.State                  as S
 import           Halco.Utils.Classes          (Empty (..))
 
--- Sorts of information about the dataflow:
+-- Sorts of information about the data:
 -- attributes that are available on each dataflow element;
 -- properties that are satisfied for the attributes.
 data State = State
