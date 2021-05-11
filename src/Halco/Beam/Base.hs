@@ -33,10 +33,10 @@ groupBy' ks = groupByKey . map (\e -> (fmap ($ e) ks, e))
 coGroupByKey :: Ord k => (k1, [(k, v1)]) -> (k2, [(k, v2)])
              -> [(k, ( (k1, [v1])
                      , (k2, [v2]) ))]
-coGroupByKey (k1, vs1) (k2, vs2) =
-  [(k, (,) (k1, vs1') (k2, vs2'))
-    | (k , vs1') <- groupByKey vs1
-    , (k', vs2') <- groupByKey vs2
+coGroupByKey (k1, kvs1) (k2, kvs2) =
+  [(k, (,) (k1, vs1) (k2, vs2))
+    | (k , vs1) <- groupByKey kvs1
+    , (k', vs2) <- groupByKey kvs2
     , k == k']
 
 -- Beam transform that aggregates values with the same key

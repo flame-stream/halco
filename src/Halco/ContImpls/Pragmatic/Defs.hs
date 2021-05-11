@@ -7,3 +7,4 @@ newtype Attr = Attr AttrName
 type PropName = String
 newtype OpaqueProp = OpaqueProp PropName
   deriving (Show, Eq, Ord)
+
