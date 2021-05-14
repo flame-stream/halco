@@ -33,7 +33,8 @@ checkGraph :: ContsContext s i o o1 o2
            => CGraph s i o o1 o2 -> Graph -> Either (CheckGraphError s i) ()
 checkGraph (e, s) g@(Graph m)
   | not $ g `hasSemantics` s = Left SemanticsError
-  | otherwise = mapLeft ContMatchError $ () <$ foldM (fmap snd `comp2` checkTerm e g) Map.empty (Map.keys m)
+  | otherwise = mapLeft ContMatchError
+              $ () <$ foldM (fmap snd `comp2` checkTerm e g) Map.empty (Map.keys m)
 
 hasSemantics :: Graph -> Semantics -> Bool
 hasSemantics g s =

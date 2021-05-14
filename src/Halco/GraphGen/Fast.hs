@@ -49,12 +49,11 @@ genFromSources d e nid sources nodes =
   let ops1 =
         [ (op, s `update1` o, nn `Set.insert` nns)
         | ((nid, s), nns) <- sources
-        , nn <- Map.keys $ CGraph.ops1 e
+        , (nn, COp1 i o) <- Map.toList $ CGraph.ops1 e
+        , s `match` i
         , nn `Set.notMember` nns
         , let op = Op1 nn nid
-        , op `Set.notMember` nodes
-        , let COp1 i o = CGraph.ops1 e ! nn
-        , s `match` i ] in
+        , op `Set.notMember` nodes ] in
   let enumerate :: [a] -> [(NodeId, a)]
       enumerate = zip [nid + 1..] in
   let ops1' = enumerate ops1 in
@@ -65,14 +64,13 @@ genFromSources d e nid sources nodes =
         | ((nid1, s1), nns1) <- sources
         , ((nid2, s2), nns2) <- sources
         , nid1 /= nid2
-        , nn <- Map.keys $ CGraph.ops2 e
+        , (nn, COp2 i1 i2 o) <- Map.toList $ CGraph.ops2 e
+        , s1 `match` i1
+        , s2 `match` i2
         , nn `Set.notMember` nns1
         , nn `Set.notMember` nns2
         , let op = Op2 nn nid1 nid2
-        , op `Set.notMember` nodes
-        , let COp2 i1 i2 o = CGraph.ops2 e ! nn
-        , s1 `match` i1
-        , s2 `match` i2 ] in
+        , op `Set.notMember` nodes ] in
   let enumerate' :: [a] -> [(NodeId, a)]
       enumerate' = zip [nid' + 1..] in
   let ops2' = enumerate' ops2 in

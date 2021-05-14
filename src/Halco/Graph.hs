@@ -87,9 +87,9 @@ findIds :: Graph -> NodeName -> [NodeId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m
 
 semanticNids :: Graph -> Semantics -> [SemanticNids]
-semanticNids g = (Set.fromList <$>)
-                . cartesianProduct . (findIds g <$>)
-                . Set.toList
+semanticNids g = map Set.fromList
+               . cartesianProduct . map (findIds g)
+               . Set.toList
 
 noSameNodes :: Graph -> Bool
 noSameNodes = all (== (1 :: Integer)) . countOccs . nodeNames
