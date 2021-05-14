@@ -10,7 +10,7 @@ import           Halco.Conts  (InCont, OutCont, OutCont1, OutCont2)
 import           Halco.Defs   (NodeName)
 import           Halco.Graph  (Node, NodeId)
 
-s :: Ord k => [k] -> Set k
+s :: Ord a => [a] -> Set a
 s = Set.fromList
 
 m :: Ord k => [(k, v)] -> Map k v

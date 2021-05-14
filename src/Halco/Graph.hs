@@ -11,6 +11,7 @@ import qualified Data.Set                     as Set
 
 import           Halco.CGraph                 (Semantics)
 import           Halco.Defs                   (NodeName)
+import           Halco.Utils.Classes          (Empty (..))
 import           Halco.Utils.Data.List        (cartesianProduct)
 import           Halco.Utils.Data.Map         (findKeys)
 import           Halco.Utils.Data.Traversable (countOccs)
@@ -27,6 +28,9 @@ data Node =
   deriving (Ord, Eq, Show)
 
 newtype Graph = Graph (Map NodeId Node)
+
+instance Empty Graph where
+  empty = graph []
 
 instance Semigroup Graph where
   (<>) = union
@@ -46,9 +50,6 @@ toMap (Graph m) = m
 toList :: Graph -> [(NodeId, Node)]
 toList = Map.toList . toMap
 
-empty :: Graph
-empty = graph []
-
 union :: Graph -> Graph -> Graph
 union (Graph m1) (Graph m2) = Graph $ m1 <> m2
 
@@ -61,26 +62,26 @@ nodeName = \case
 nodeNames :: Graph -> [NodeName]
 nodeNames (Graph m) = map nodeName $ Map.elems m
 
--- Extracts graph that has at least one of each nid of semantics.
-extractPipeline :: Graph -> SemanticNids -> Graph
-extractPipeline g nids = Map.foldrWithKey f empty $ toMap g
+-- Extracts graph that has at least one of each node of semantics in its leafs
+extractDataflow :: Graph -> SemanticNids -> Graph
+extractDataflow g nids = Map.foldrWithKey f empty $ toMap g
   where
     f :: NodeId -> Node -> Graph -> Graph
     f nid _ g'@(Graph m')
       | nid `Map.member` m' = g'
       | nid `Set.notMember` nids = g'
-      | otherwise = extractPipeline' g nid g'
+      | otherwise = extractDataflow' g nid g'
 
-    extractPipeline' :: Graph -> NodeId -> Graph -> Graph
-    extractPipeline' g@(Graph m) nid g'@(Graph m')
+    extractDataflow' :: Graph -> NodeId -> Graph -> Graph
+    extractDataflow' g@(Graph m) nid g'@(Graph m')
       | nid `Map.member` m' = g'
       | otherwise = m ! nid & Graph . \case
         s@(Source _) -> Map.insert nid s m'
-        t@(Op1 _ nid') -> Map.insert nid t . toMap $ extractPipeline' g nid' g'
-        t@(Op2 _ nid1 nid2) ->
-          let m1 = toMap $ extractPipeline' g nid1 g' in
-          let m2 = toMap $ extractPipeline' g nid2 g' in
-          Map.insert nid t $ m1 <> m2
+        o@(Op1 _ nid') -> Map.insert nid o . toMap $ extractDataflow' g nid' g'
+        o@(Op2 _ nid1 nid2) ->
+          let m1 = toMap $ extractDataflow' g nid1 g' in
+          let m2 = toMap $ extractDataflow' g nid2 g' in
+          Map.insert nid o $ m1 <> m2
 
 findIds :: Graph -> NodeName -> [NodeId]
 findIds (Graph m) nn = findKeys nn $ nodeName <$> m

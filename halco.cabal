@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.3.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 
@@ -59,6 +59,7 @@ library
       Halco.Utils.Data.List
       Halco.Utils.Data.Map
       Halco.Utils.Data.Traversable
+      Halco.Utils.Function
       Halco.Utils.ListT
   other-modules:
       Paths_halco

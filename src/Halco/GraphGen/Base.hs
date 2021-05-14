@@ -36,7 +36,7 @@ genGraphs (e, s) =
   let opsNames = Set.fromList $ Map.keys (CGraph.ops1 e) <> Map.keys (CGraph.ops2 e) in
   let nodes = genFromSources 5 e opsNames states in
   let bigGraph = graph $ sources ++ StateM.evalState (ListT.toList nodes) nidMax in
-  let graphs = map (bigGraph `Graph.extractPipeline`) $ Graph.semanticNids bigGraph s in
+  let graphs = map (bigGraph `Graph.extractDataflow`) $ Graph.semanticNids bigGraph s in
   filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
   where
     enumerate = zip [1..]

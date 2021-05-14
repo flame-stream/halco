@@ -1,5 +1,6 @@
 *.pdf
 *.xopp
+.DS_Store
 
 # Created by https://www.toptal.com/developers/gitignore/api/haskell,latex,vscode,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=haskell,latex,vscode,intellij
