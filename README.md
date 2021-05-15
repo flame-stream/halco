@@ -9,3 +9,23 @@ In this work, we introduce a novel approach to specify distributed dataflows.
 Our method is based on declarative specifications of user-defined operations called contracts.
 Such specifications allow us to build a set of equivalent graphs, which form a space for optimization.
 We implement a graphs generation prototype and outline the challenges regarding the optimization problem.
+
+## Run
+
+Haskell and Stack are required.
+
+To run in REPL mode:
+```bash
+$ stack ghci
+```
+
+To run tests:
+```bash
+$ stack test
+```
+
+## Repository
+
+- src/Halco/Beam/ - simulation of the Apache Beam core transformations.
+- src/Halco/ContImpls/ - different implementations of contracts.
+- src/Halco/ - abstractly defined contracts and implementation-independent code.
