@@ -29,8 +29,9 @@ genGraphs (e, s) =
   let sources = enumerate $ Source . fst <$> sourceConts in
   let depth = Map.size (CGraph.ops1 e) + Map.size (CGraph.ops2 e) in
   let ops = genFromSources depth e nidMax ((, Set.empty) <$> sourceSchemes) Set.empty in
-  let bigGraph = graph $ sources ++ ops in
-  let graphs = map (bigGraph `Graph.extractDataflow`) $ Graph.semanticNids bigGraph s in
+  let universalGraph = graph $ sources ++ ops in
+  let graphs = map (universalGraph `Graph.extractDataflow`)
+             $ Graph.semanticNids universalGraph s in
   filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
   where
     enumerate = zip [1..]
