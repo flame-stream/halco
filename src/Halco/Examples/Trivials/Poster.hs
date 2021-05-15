@@ -11,7 +11,7 @@ import qualified Halco.CGraph                   as CGraph
 import           Halco.ContImpls.Trivial.Conts
 import qualified Halco.ContImpls.Trivial.Conts  as Trivial
 import           Halco.ContImpls.Trivial.DSL
-import           Halco.ContImpls.Trivial.State  (State)
+import           Halco.ContImpls.Trivial.Scheme  (Scheme)
 import           Halco.ContImpls.Trivials.Conts
 import qualified Halco.ContImpls.Trivials.Conts as Trivials
 import           Halco.Conts
@@ -23,7 +23,7 @@ import           Halco.Utils.Classes            (Empty (..))
 semantics ::Semantics
 semantics = s ["fraudMetric", "participants"]
 
-cgraph :: CGraph State Trivials.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
+cgraph :: CGraph Scheme Trivials.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "bid" `ap0` empty

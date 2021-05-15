@@ -13,7 +13,7 @@ import qualified Halco.CGraph                  as CGraph
 import           Halco.ContImpls.Trivial.Conts
 import qualified Halco.ContImpls.Trivial.Conts as Trivial
 import           Halco.ContImpls.Trivial.DSL
-import           Halco.ContImpls.Trivial.State (State)
+import           Halco.ContImpls.Trivial.Scheme (Scheme)
 import           Halco.Conts
 import           Halco.DSL
 import           Halco.EGraph
@@ -32,7 +32,7 @@ semantics = s
   , "nameSpeciesCorrelation"
   ]
 
-cgraph :: CGraph State Trivial.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
+cgraph :: CGraph Scheme Trivial.InCont Trivial.OutCont Trivial.OutCont Trivial.OutCont
 cgraph = (, semantics) $ Env
   { CGraph.sources = m
     [ "pets"    `ap0` empty

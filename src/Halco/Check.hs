@@ -20,7 +20,7 @@ import           Halco.Conts                  (ContsContext, InCont (..),
                                                OutCont2 (..))
 import           Halco.Graph                  (Graph (..), Node (..), NodeId)
 import qualified Halco.Graph                  as Graph
-import           Halco.State                  (State)
+import           Halco.Scheme                 (Scheme)
 import           Halco.Utils.Data.Traversable (countOccs)
 import           Halco.Utils.Function         (comp2)
 
@@ -41,35 +41,35 @@ hasSemantics g s =
   let occs = countOccs $ Graph.nodeNames g in
   all ((== (1 :: Integer)) . (occs !)) s
 
-type CheckedTerms s = Map NodeId s
+type CheckedNodes s = Map NodeId s
 
 checkTerm :: ContsContext s i o o1 o2
           => Env s i o o1 o2 -> Graph
-          -> CheckedTerms s -> NodeId
-          -> Either (s, i) (s, CheckedTerms s)
+          -> CheckedNodes s -> NodeId
+          -> Either (s, i) (s, CheckedNodes s)
 checkTerm e g@(Graph m) checked nid
   | nid `Map.member` checked = Right (checked ! nid, checked)
   | otherwise = case m ! nid of
     Source nn ->
-      let state = toState $ CGraph.sources e ! nn & \case CSource o -> o in
-      let checked' = check state checked in
-      Right (state, checked')
+      let scheme = toScheme $ CGraph.sources e ! nn & \case CSource o -> o in
+      let checked' = check scheme checked in
+      Right (scheme, checked')
     Op1 nn nid' -> do
       let COp1 i o = CGraph.ops1 e ! nn
-      (state, checked') <- checkTerm e g checked nid'
-      state `matchM` i
-      let state' = state `update1` o
-      let checked'' = check state' checked'
-      Right (state', checked'')
+      (scheme, checked') <- checkTerm e g checked nid'
+      scheme `matchM` i
+      let scheme' = scheme `update1` o
+      let checked'' = check scheme' checked'
+      Right (scheme', checked'')
     Op2 nn nid1 nid2 -> do
       let COp2 i1 i2 o = CGraph.ops2 e ! nn
-      (state1, checked') <- checkTerm e g checked nid1
-      state1 `matchM` i1
-      (state2, checked'') <- checkTerm e g checked' nid2
-      state2 `matchM` i2
-      let state' = (state1, state2) `update2` o
-      let checked''' = check state' checked''
-      Right (state', checked''')
+      (scheme1, checked') <- checkTerm e g checked nid1
+      scheme1 `matchM` i1
+      (scheme2, checked'') <- checkTerm e g checked' nid2
+      scheme2 `matchM` i2
+      let scheme' = (scheme1, scheme2) `update2` o
+      let checked''' = check scheme' checked''
+      Right (scheme', checked''')
   where
-    check :: s -> CheckedTerms s -> CheckedTerms s
+    check :: s -> CheckedNodes s -> CheckedNodes s
     check = Map.insert nid

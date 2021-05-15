@@ -93,7 +93,7 @@
     -- Свойства
     type Prop = PropName
 
-    data State = State
+    data Scheme = Scheme
       { attrs :: Set Attr -- Множество атрибутов в потоке.
       , props :: Set Prop -- Множество свойств в потоке.
       }
@@ -107,7 +107,7 @@
       , propsI' :: Set Prop -- Множество запрещённых свойств.
       }
 
-    match :: State -> InCont -> Bool
+    match :: Scheme -> InCont -> Bool
     match s c = attrsI c `Set.isSubsetOf` attrs s
              && propsI c `Set.isSubsetOf` props s
              && propsI' c `Set.disjoint`  props s
@@ -129,9 +129,9 @@
       , propsO' :: Set Prop -- Множество удаляемых свойств.
       }
 
-    update :: State -> OutCont -> State
+    update :: Scheme -> OutCont -> Scheme
     update s c =
-      State { attrs = attrs'
+      Scheme { attrs = attrs'
             , props = propsO c `Set.union' (props s \\ propsO' c) }
       where
         attrs' = case attrsO c of
@@ -142,8 +142,8 @@
 Если если в операцию входят два потока, то чтобы посчитать состояние выхода, состояния входных потоков объединяются:
 
 \begin{lstlisting}
-    union :: State -> State -> State
-    union s1 s2 = State { attrs = attrs s1 `Set.union` attrs s2
+    union :: Scheme -> Scheme -> Scheme
+    union s1 s2 = Scheme { attrs = attrs s1 `Set.union` attrs s2
                         , props = props s1 `Set.union` props s2 }
 \end{lstlisting}
 

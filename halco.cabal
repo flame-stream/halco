@@ -31,16 +31,16 @@ library
       Halco.ContImpls.Beam.Conts
       Halco.ContImpls.Beam.Defs
       Halco.ContImpls.Beam.Ops
-      Halco.ContImpls.Beam.State
+      Halco.ContImpls.Beam.Scheme
       Halco.ContImpls.Pragmatic.Conts
       Halco.ContImpls.Pragmatic.Defs
       Halco.ContImpls.Pragmatic.DSL
       Halco.ContImpls.Pragmatic.Ops
-      Halco.ContImpls.Pragmatic.State
+      Halco.ContImpls.Pragmatic.Scheme
       Halco.ContImpls.Trivial.Conts
       Halco.ContImpls.Trivial.Defs
       Halco.ContImpls.Trivial.DSL
-      Halco.ContImpls.Trivial.State
+      Halco.ContImpls.Trivial.Scheme
       Halco.ContImpls.Trivials.Conts
       Halco.Conts
       Halco.Cost
@@ -53,7 +53,7 @@ library
       Halco.Graph
       Halco.GraphGen.Base
       Halco.GraphGen.Fast
-      Halco.State
+      Halco.Scheme
       Halco.Utils.Classes
       Halco.Utils.Data.Functor
       Halco.Utils.Data.List

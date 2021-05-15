@@ -25,10 +25,10 @@ genGraphs :: ContsContext s i o o1 o2 => CGraph s i o o1 o2 -> [Graph]
 genGraphs (e, s) =
   let sourceConts = Map.toList $ CGraph.sources e in
   let nidMax = length' sourceConts in
-  let sourceStates = enumerate $ toState . CGraph.sourceC . snd <$> sourceConts in
+  let sourceSchemes = enumerate $ toScheme . CGraph.sourceC . snd <$> sourceConts in
   let sources = enumerate $ Source . fst <$> sourceConts in
   let depth = Map.size (CGraph.ops1 e) + Map.size (CGraph.ops2 e) in
-  let ops = genFromSources depth e nidMax ((, Set.empty) <$> sourceStates) Set.empty in
+  let ops = genFromSources depth e nidMax ((, Set.empty) <$> sourceSchemes) Set.empty in
   let bigGraph = graph $ sources ++ ops in
   let graphs = map (bigGraph `Graph.extractDataflow`) $ Graph.semanticNids bigGraph s in
   filter Graph.noSameNodes graphs -- Every semantics node also will occur only once
